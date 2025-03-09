@@ -2,115 +2,125 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>CRUD con Node y MongoDB Atlas</title>
+    <title>CRUD de Personajes</title>
   </head>
   <body>
-    <h1>Agregar Tarea</h1>
+    <h1>Agregar Personaje</h1>
     <div>
-      <input type="text" id="title" placeholder="Título" />
-      <input type="text" id="desc" placeholder="Descripción" />
-      <button id="btnAdd">Agregar Tarea</button>
+      <input type="text" id="charName" placeholder="Nombre" />
+      <br/><br/>
+      <input type="text" id="ability1" placeholder="Habilidad 1" />
+      <input type="text" id="ability2" placeholder="Habilidad 2" />
+      <input type="text" id="ability3" placeholder="Habilidad 3" />
+      <input type="text" id="ability4" placeholder="Habilidad 4" />
+      <br/><br/>
+      <input type="number" id="charLevel" placeholder="Nivel" />
+      <br/><br/>
+      <button id="btnAddCharacter">Agregar Personaje</button>
     </div>
 
-    <hr />
+    <hr/>
 
-    <h2>Operaciones CRUD (Leer, Actualizar y Eliminar)</h2>
-    <!-- Botón para mostrar las tareas y la sección CRUD -->
-    <button id="btnShowTasks">Mostrar Tareas</button>
+    <h2>Operaciones CRUD (Leer y Eliminar en este ejemplo)</h2>
+    <!-- Botón para mostrar personajes -->
+    <button id="btnShowCharacters">Mostrar Personajes</button>
     
-    <!-- Sección oculta al inicio, donde mostraremos las tareas -->
-    <div id="crudSection" style="display: none;">
-      <ul id="taskList"></ul>
+    <!-- Sección oculta al inicio, donde mostraremos los personajes -->
+    <div id="charactersSection" style="display: none;">
+      <ul id="charactersList"></ul>
     </div>
     
     <script>
-      // URL de tu back-end en Render
-      const API_URL = "https://crud-mongo-rsxf.onrender.com/api/tasks";
+      // Reemplaza con tu endpoint real:
+      // const API_URL = "http://localhost:3000/api/characters";
+      const API_URL = "https://mi-servidor-render.onrender.com/api/characters";
 
       /****************************************************
-       * 1) AGREGAR TAREA (SIN MOSTRAR LA LISTA AL INICIO)
+       * 1) AGREGAR PERSONAJE
        ****************************************************/
-      document.getElementById('btnAdd').addEventListener('click', async () => {
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('desc').value;
-        
-        // Crea la nueva tarea en la base de datos
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, description })
-        });
-        
-        // Limpia los campos
-        document.getElementById('title').value = '';
-        document.getElementById('desc').value = '';
-        
-        // No hacemos nada más (no mostramos la lista todavía)
+      document.getElementById('btnAddCharacter').addEventListener('click', async () => {
+        const name = document.getElementById('charName').value;
+        const ability1 = document.getElementById('ability1').value;
+        const ability2 = document.getElementById('ability2').value;
+        const ability3 = document.getElementById('ability3').value;
+        const ability4 = document.getElementById('ability4').value;
+        const level = document.getElementById('charLevel').value;
+
+        // Creamos un arreglo con las 4 habilidades
+        const abilities = [ability1, ability2, ability3, ability4];
+
+        // Llamada POST para crear el personaje
+        try {
+          await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, abilities, level })
+          });
+        } catch (error) {
+          console.error('Error al crear personaje:', error);
+        }
+
+        // Limpiamos los campos
+        document.getElementById('charName').value = '';
+        document.getElementById('ability1').value = '';
+        document.getElementById('ability2').value = '';
+        document.getElementById('ability3').value = '';
+        document.getElementById('ability4').value = '';
+        document.getElementById('charLevel').value = '';
       });
 
       /****************************************************
-       * 2) CRUD COMPLETO EN UN APARTADO APARTE
-       *    (LEER, ACTUALIZAR, ELIMINAR)
+       * 2) MOSTRAR LISTA DE PERSONAJES Y ELIMINAR
        ****************************************************/
-      
-      // Función para leer/obtener las tareas y mostrarlas en la lista
-      async function fetchTasks() {
+      // Función para obtener personajes y mostrarlos
+      async function fetchCharacters() {
         try {
           const res = await fetch(API_URL);
-          const tasks = await res.json();
+          const characters = await res.json();
 
-          // Limpiamos la lista antes de renderizar
-          const taskList = document.getElementById('taskList');
-          taskList.innerHTML = '';
+          // Limpiamos la lista
+          const list = document.getElementById('charactersList');
+          list.innerHTML = '';
 
-          // Recorremos cada tarea y creamos un <li>
-          tasks.forEach(task => {
+          // Renderizamos cada personaje
+          characters.forEach(character => {
             const li = document.createElement('li');
-            li.textContent = `${task.title} - ${task.description} - Completada: ${task.completed}`;
-            
-            // Botón para actualizar (toggle completed)
-            const btnUpdate = document.createElement('button');
-            btnUpdate.textContent = 'Toggle Completada';
-            btnUpdate.onclick = async () => {
-              await fetch(`${API_URL}/${task._id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  ...task,
-                  completed: !task.completed
-                })
-              });
-              fetchTasks(); // Vuelve a cargar la lista
-            };
-            
+            li.textContent = `Nombre: ${character.name} | 
+                              Habilidades: ${character.abilities.join(', ')} | 
+                              Nivel: ${character.level}`;
+
             // Botón para eliminar
             const btnDelete = document.createElement('button');
             btnDelete.textContent = 'Eliminar';
             btnDelete.onclick = async () => {
-              await fetch(`${API_URL}/${task._id}`, {
-                method: 'DELETE'
-              });
-              fetchTasks(); // Vuelve a cargar la lista
+              try {
+                await fetch(`${API_URL}/${character._id}`, {
+                  method: 'DELETE'
+                });
+                // Vuelve a cargar la lista después de eliminar
+                fetchCharacters();
+              } catch (error) {
+                console.error('Error al eliminar personaje:', error);
+              }
             };
 
-            // Agregamos los botones al <li>
-            li.appendChild(btnUpdate);
             li.appendChild(btnDelete);
-            taskList.appendChild(li);
+            list.appendChild(li);
           });
         } catch (error) {
-          console.error('Error al obtener las tareas:', error);
+          console.error('Error al obtener personajes:', error);
         }
       }
 
-      // Botón para mostrar la sección CRUD y cargar la lista
-      const btnShowTasks = document.getElementById('btnShowTasks');
-      const crudSection = document.getElementById('crudSection');
-      btnShowTasks.addEventListener('click', () => {
+      // Botón para mostrar personajes
+      const btnShowCharacters = document.getElementById('btnShowCharacters');
+      const charactersSection = document.getElementById('charactersSection');
+
+      btnShowCharacters.addEventListener('click', () => {
         // Mostramos la sección (si estaba oculta)
-        crudSection.style.display = 'block';
-        // Cargamos la lista de tareas
-        fetchTasks();
+        charactersSection.style.display = 'block';
+        // Cargamos la lista de personajes
+        fetchCharacters();
       });
     </script>
   </body>

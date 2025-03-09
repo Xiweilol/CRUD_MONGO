@@ -31,12 +31,23 @@ app.use(express.static('public'));
 app.post('/api/characters', async (req, res) => {
   try {
     const { name, abilities, level } = req.body;
-    const newCharacter = await Character.create({ name, abilities, level });
+    
+    // Validación para asegurarse de que "level" sea un número
+    const levelNumber = Number(level);
+    if (isNaN(levelNumber)) {
+      return res.status(400).json({ error: 'El campo "nivel" debe ser un número válido.' });
+    }
+    
+    const newCharacter = await Character.create({ name, abilities, level: levelNumber });
     return res.status(201).json(newCharacter);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
     return res.status(500).json({ error: error.message });
   }
 });
+
 
 // READ (Todos los personajes)
 app.get('/api/characters', async (req, res) => {
@@ -52,16 +63,27 @@ app.get('/api/characters', async (req, res) => {
 app.put('/api/characters/:id', async (req, res) => {
   try {
     const { name, abilities, level } = req.body;
+
+    // Validar que "level" sea un número
+    const levelNumber = Number(level);
+    if (isNaN(levelNumber)) {
+      return res.status(400).json({ error: 'El campo "nivel" debe ser un número válido.' });
+    }
+
     const updatedCharacter = await Character.findByIdAndUpdate(
       req.params.id,
-      { name, abilities, level },
+      { name, abilities, level: levelNumber },
       { new: true }
     );
     return res.json(updatedCharacter);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
     return res.status(500).json({ error: error.message });
   }
 });
+
 
 // DELETE
 app.delete('/api/characters/:id', async (req, res) => {

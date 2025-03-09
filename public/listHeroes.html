@@ -8,9 +8,20 @@
   <body class="listPage">
     <button onclick="window.location.href='index.html'">Volver al Inicio</button>
     <h1>Lista de Heroes de LOL</h1>
-    <ul id="heroList"></ul>
 
-    <!-- Incluimos el script externo -->
+    <!-- Contenedor general del carrusel -->
+    <div class="carousel-container">
+      <!-- Botón "Anterior" -->
+      <button id="prevBtn" class="carousel-btn">‹</button>
+
+      <!-- Carrusel (aquí se inyectan las tarjetas con JS) -->
+      <div id="carousel" class="carousel"></div>
+
+      <!-- Botón "Siguiente" -->
+      <button id="nextBtn" class="carousel-btn">›</button>
+    </div>
+
+    <!-- Tu script de lógica (donde harás el fetch y el render del carrusel) -->
     <script src="script.js"></script>
   </body>
 </html>

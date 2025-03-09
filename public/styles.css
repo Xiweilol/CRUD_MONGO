@@ -117,3 +117,72 @@ body {
     background-color: #5a349b;
   }
   
+  /* Página de lista */
+body.listPage {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Encabezado */
+  body.listPage h1 {
+    margin-top: 20px;
+  }
+  
+  /* Contenedor del carrusel */
+  .carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    position: relative; /* Para posicionar los botones encima */
+    width: 80%;
+    max-width: 1200px;
+  }
+  
+  /* Botones del carrusel (‹ y ›) */
+  .carousel-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    margin: 0 10px;
+    z-index: 10;
+    transition: transform 0.2s;
+  }
+  
+  .carousel-btn:hover {
+    transform: scale(1.2);
+  }
+  
+  /* Contenedor donde van las tarjetas */
+  .carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Oculta el desborde */
+    width: 100%;
+    position: relative;
+  }
+  
+  /* Estilos base para cada tarjeta */
+  .card {
+    background-color: #2b2b2b;
+    border-radius: 10px;
+    margin: 0 10px;
+    padding: 20px;
+    min-width: 250px;
+    max-width: 300px;
+    text-align: center;
+    flex-shrink: 0; /* Evita que se encojan */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+  
+  /* Tarjeta resaltada (la del centro) */
+  .card.active {
+    transform: scale(1.1);
+    background-color: #333;
+  }

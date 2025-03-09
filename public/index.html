@@ -5,77 +5,113 @@
     <title>CRUD con Node y MongoDB Atlas</title>
   </head>
   <body>
-    <h1>Lista de Tareas</h1>
+    <h1>Agregar Tarea</h1>
     <div>
       <input type="text" id="title" placeholder="Título" />
       <input type="text" id="desc" placeholder="Descripción" />
       <button id="btnAdd">Agregar Tarea</button>
     </div>
+
+    <hr />
+
+    <h2>Operaciones CRUD (Leer, Actualizar y Eliminar)</h2>
+    <!-- Botón para mostrar las tareas y la sección CRUD -->
+    <button id="btnShowTasks">Mostrar Tareas</button>
     
-    <ul id="taskList"></ul>
+    <!-- Sección oculta al inicio, donde mostraremos las tareas -->
+    <div id="crudSection" style="display: none;">
+      <ul id="taskList"></ul>
+    </div>
     
     <script>
-      const API_URL = "https://crud-mongo-rsxf.onrender.com/api/tasks"; // Cambia esto cuando lo hospedes
+      // URL de tu back-end en Render
+      const API_URL = "https://crud-mongo-rsxf.onrender.com/api/tasks";
 
-      async function fetchTasks() {
-        const res = await fetch(API_URL);
-        const tasks = await res.json();
-        const taskList = document.getElementById('taskList');
-        taskList.innerHTML = ''; 
-        tasks.forEach(task => {
-          const li = document.createElement('li');
-          li.textContent = `${task.title} - ${task.description} - Completada: ${task.completed}`;
-          
-          // Botones para actualizar/borrar
-          const btnUpdate = document.createElement('button');
-          btnUpdate.textContent = 'Toggle Completada';
-          btnUpdate.onclick = async () => {
-            await fetch(`${API_URL}/${task._id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ...task,
-                completed: !task.completed
-              })
-            });
-            fetchTasks();
-          };
-          
-          const btnDelete = document.createElement('button');
-          btnDelete.textContent = 'Eliminar';
-          btnDelete.onclick = async () => {
-            await fetch(`${API_URL}/${task._id}`, {
-              method: 'DELETE'
-            });
-            fetchTasks();
-          };
-
-          li.appendChild(btnUpdate);
-          li.appendChild(btnDelete);
-          taskList.appendChild(li);
-        });
-      }
-
+      /****************************************************
+       * 1) AGREGAR TAREA (SIN MOSTRAR LA LISTA AL INICIO)
+       ****************************************************/
       document.getElementById('btnAdd').addEventListener('click', async () => {
         const title = document.getElementById('title').value;
         const description = document.getElementById('desc').value;
         
-        // Crea nueva tarea
+        // Crea la nueva tarea en la base de datos
         await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title, description })
         });
         
+        // Limpia los campos
         document.getElementById('title').value = '';
         document.getElementById('desc').value = '';
         
-        // Refresca la lista de tareas
-        fetchTasks();
+        // No hacemos nada más (no mostramos la lista todavía)
       });
 
-      // Al cargar la página, obten las tareas
-      fetchTasks();
+      /****************************************************
+       * 2) CRUD COMPLETO EN UN APARTADO APARTE
+       *    (LEER, ACTUALIZAR, ELIMINAR)
+       ****************************************************/
+      
+      // Función para leer/obtener las tareas y mostrarlas en la lista
+      async function fetchTasks() {
+        try {
+          const res = await fetch(API_URL);
+          const tasks = await res.json();
+
+          // Limpiamos la lista antes de renderizar
+          const taskList = document.getElementById('taskList');
+          taskList.innerHTML = '';
+
+          // Recorremos cada tarea y creamos un <li>
+          tasks.forEach(task => {
+            const li = document.createElement('li');
+            li.textContent = `${task.title} - ${task.description} - Completada: ${task.completed}`;
+            
+            // Botón para actualizar (toggle completed)
+            const btnUpdate = document.createElement('button');
+            btnUpdate.textContent = 'Toggle Completada';
+            btnUpdate.onclick = async () => {
+              await fetch(`${API_URL}/${task._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  ...task,
+                  completed: !task.completed
+                })
+              });
+              fetchTasks(); // Vuelve a cargar la lista
+            };
+            
+            // Botón para eliminar
+            const btnDelete = document.createElement('button');
+            btnDelete.textContent = 'Eliminar';
+            btnDelete.onclick = async () => {
+              await fetch(`${API_URL}/${task._id}`, {
+                method: 'DELETE'
+              });
+              fetchTasks(); // Vuelve a cargar la lista
+            };
+
+            // Agregamos los botones al <li>
+            li.appendChild(btnUpdate);
+            li.appendChild(btnDelete);
+            taskList.appendChild(li);
+          });
+        } catch (error) {
+          console.error('Error al obtener las tareas:', error);
+        }
+      }
+
+      // Botón para mostrar la sección CRUD y cargar la lista
+      const btnShowTasks = document.getElementById('btnShowTasks');
+      const crudSection = document.getElementById('crudSection');
+      btnShowTasks.addEventListener('click', () => {
+        // Mostramos la sección (si estaba oculta)
+        crudSection.style.display = 'block';
+        // Cargamos la lista de tareas
+        fetchTasks();
+      });
     </script>
   </body>
 </html>

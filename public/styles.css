@@ -31,4 +31,9 @@ body {
     align-items: center;     /* Centrado horizontal */
     min-height: 100vh;       /* Ocupa la altura completa de la ventana */
   }
-  
+
+  body.index-container{
+    background: url("img/fondo_index.jpg") no-repeat center center fixed; 
+    background-size: cover;
+    min-height: 100vh; /* Para que abarque toda la ventana */
+  }

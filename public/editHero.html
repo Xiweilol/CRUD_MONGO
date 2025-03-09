@@ -4,87 +4,12 @@
     <meta charset="UTF-8" />
     <title>Editar y Eliminar Heroes</title>
   </head>
-  <body>
+  <body class="editPage">
     <button onclick="window.location.href='index.html'">Volver al Inicio</button>
-
     <h1>Editar y Eliminar Heroes</h1>
     <ul id="heroList"></ul>
 
-    <script>
-      const API_URL = "https://crud-mongo-rsxf.onrender.com/api/characters";
-
-      async function fetchHeroes() {
-        try {
-          const res = await fetch(API_URL);
-          const heroes = await res.json();
-          const list = document.getElementById('heroList');
-          list.innerHTML = "";
-          heroes.forEach(hero => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <strong>Nombre:</strong> <input type="text" value="${hero.name}" id="name-${hero._id}" /><br>
-              <strong>Habilidades:</strong>
-              <input type="text" value="${hero.abilities[0]}" id="ab1-${hero._id}" />
-              <input type="text" value="${hero.abilities[1]}" id="ab2-${hero._id}" />
-              <input type="text" value="${hero.abilities[2]}" id="ab3-${hero._id}" />
-              <input type="text" value="${hero.abilities[3]}" id="ab4-${hero._id}" /><br>
-              <strong>Nivel:</strong> <input type="number" value="${hero.level}" id="level-${hero._id}" /><br>
-              <button onclick="updateHero('${hero._id}')">Guardar cambios</button>
-              <button onclick="deleteHero('${hero._id}')">Eliminar</button>
-              <hr>
-            `;
-            list.appendChild(li);
-          });
-        } catch (error) {
-          console.error("Error al obtener heroes:", error);
-        }
-      }
-
-      async function updateHero(id) {
-        const name = document.getElementById(`name-${id}`).value;
-        const abilities = [
-          document.getElementById(`ab1-${id}`).value,
-          document.getElementById(`ab2-${id}`).value,
-          document.getElementById(`ab3-${id}`).value,
-          document.getElementById(`ab4-${id}`).value
-        ];
-        const level = Number(document.getElementById(`level-${id}`).value);
-
-        try {
-          const res = await fetch(`${API_URL}/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, abilities, level })
-          });
-          if(res.ok) {
-            alert("Heroe actualizado");
-            fetchHeroes();
-          } else {
-            alert("Error al actualizar");
-          }
-        } catch (error) {
-          console.error("Error al actualizar:", error);
-        }
-      }
-
-      async function deleteHero(id) {
-        try {
-          const res = await fetch(`${API_URL}/${id}`, {
-            method: 'DELETE'
-          });
-          if(res.ok) {
-            alert("Heroe eliminado");
-            fetchHeroes();
-          } else {
-            alert("Error al eliminar");
-          }
-        } catch (error) {
-          console.error("Error al eliminar:", error);
-        }
-      }
-
-      // Cargamos la lista al iniciar la página
-      fetchHeroes();
-    </script>
+    <!-- Incluimos el script externo -->
+    <script src="script.js"></script>
   </body>
 </html>

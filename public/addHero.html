@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Agregar Heroe</title>
   </head>
-  <body>
+  <body class="addPage">
     <button onclick="window.location.href='index.html'">Volver al Inicio</button>
     <h1>Agregar Heroe de LOL</h1>
     <form id="addHeroForm">
@@ -13,42 +13,11 @@
       <input type="text" id="ability2" placeholder="Habilidad 2" required />
       <input type="text" id="ability3" placeholder="Habilidad 3" required />
       <input type="text" id="ability4" placeholder="Habilidad 4" required /><br /><br />
-      <input type="number" id="heroLevel" placeholder="Nivel" required /><br /><br />
+      <input type="number" id="heroLevel" placeholder="Nivel" required min="1" max="18" /><br /><br />
       <button type="submit">Agregar Heroe</button>
     </form>
 
-    <script>
-      // Cambia esta URL a la de tu backend en Render
-      const API_URL = "https://crud-mongo-rsxf.onrender.com/api/characters";
-      
-      document.getElementById('addHeroForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('heroName').value;
-        const abilities = [
-          document.getElementById('ability1').value,
-          document.getElementById('ability2').value,
-          document.getElementById('ability3').value,
-          document.getElementById('ability4').value
-        ];
-        const level = Number(document.getElementById('heroLevel').value);
-        
-        try {
-          const res = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, abilities, level })
-          });
-          if(res.ok){
-            alert("Heroe agregado correctamente");
-            document.getElementById('addHeroForm').reset();
-          } else {
-            alert("Error al agregar el heroe");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Error en la conexión");
-        }
-      });
-    </script>
+    <!-- Incluimos el script externo -->
+    <script src="script.js"></script>
   </body>
 </html>

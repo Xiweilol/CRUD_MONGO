@@ -16,8 +16,18 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('ability3').value,
         document.getElementById('ability4').value
       ];
-      // Validación: convierte a número y respeta min/max (en HTML y también en back)
-      const level = Number(document.getElementById('heroLevel').value);
+      
+      // Obtener y validar el nivel
+      const levelValue = document.getElementById('heroLevel').value;
+      const level = Number(levelValue);
+      if (isNaN(level)) {
+        alert("El campo 'Nivel' debe ser un número válido.");
+        return;
+      }
+      if (level < 1 || level > 18) {
+        alert("El nivel debe estar entre 1 y 18.");
+        return;
+      }
       
       try {
         const res = await fetch(API_URL, {
@@ -89,7 +99,18 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById(`ab3-${id}`).value,
           document.getElementById(`ab4-${id}`).value
         ];
-        const level = Number(document.getElementById(`level-${id}`).value);
+        const levelValue = document.getElementById(`level-${id}`).value;
+        const level = Number(levelValue);
+        
+        // Validación en la edición
+        if (isNaN(level)) {
+          alert("El campo 'Nivel' debe ser un número válido.");
+          return;
+        }
+        if (level < 1 || level > 18) {
+          alert("El nivel debe estar entre 1 y 18.");
+          return;
+        }
     
         try {
           const res = await fetch(`${API_URL}/${id}`, {

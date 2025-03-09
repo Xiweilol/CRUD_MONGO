@@ -176,29 +176,39 @@ if (document.body.classList.contains("listPage")) {
    *****************************************************/
   if (document.body.classList.contains("editPage")) {
     const heroList = document.getElementById("heroList");
-
+  
     // Función para obtener y renderizar héroes en modo edición
     async function fetchHeroes() {
       try {
         const res = await fetch(API_URL);
         const heroes = await res.json();
         heroList.innerHTML = "";
-
+  
         heroes.forEach((hero) => {
-          const li = document.createElement("li");
-          li.innerHTML = `
-            <strong>Nombre:</strong> <input type="text" value="${hero.name}" id="name-${hero._id}" /><br>
-            <strong>Habilidades:</strong>
+          // Creamos un div con clase "edit-card"
+          const card = document.createElement("div");
+          card.classList.add("edit-card");
+  
+          card.innerHTML = `
+            <h2>Nombre:</h2>
+            <input type="text" value="${hero.name}" id="name-${hero._id}" />
+  
+            <h3>Habilidades:</h3>
             <input type="text" value="${hero.abilities[0]}" id="ab1-${hero._id}" />
             <input type="text" value="${hero.abilities[1]}" id="ab2-${hero._id}" />
             <input type="text" value="${hero.abilities[2]}" id="ab3-${hero._id}" />
-            <input type="text" value="${hero.abilities[3]}" id="ab4-${hero._id}" /><br>
-            <strong>Nivel:</strong> <input type="number" value="${hero.level}" id="level-${hero._id}" min="1" max="18"/><br>
-            <button onclick="updateHero('${hero._id}')">Guardar cambios</button>
-            <button onclick="deleteHero('${hero._id}')">Eliminar</button>
-            <hr>
+            <input type="text" value="${hero.abilities[3]}" id="ab4-${hero._id}" />
+  
+            <h3>Nivel:</h3>
+            <input type="number" value="${hero.level}" id="level-${hero._id}" min="1" max="18" />
+  
+            <div class="buttons">
+              <button onclick="updateHero('${hero._id}')">Guardar cambios</button>
+              <button onclick="deleteHero('${hero._id}')">Eliminar</button>
+            </div>
           `;
-          heroList.appendChild(li);
+          
+          heroList.appendChild(card);
         });
       } catch (error) {
         console.error("Error al obtener heroes:", error);

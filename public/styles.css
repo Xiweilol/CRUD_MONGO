@@ -123,11 +123,18 @@ body.listPage {
     display: flex;
     flex-direction: column;
     align-items: center;
+  
+    /* Fondo con overlay oscuro */
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+      url("img/fondo_listHeroes.jpg") no-repeat center center fixed;
+    background-size: cover;
   }
   
   /* Encabezado */
   body.listPage h1 {
     margin-top: 20px;
+    color: #fff; /* Texto en blanco para que sea visible sobre el fondo oscuro */
   }
   
   /* Contenedor del carrusel */
@@ -136,7 +143,7 @@ body.listPage {
     align-items: center;
     justify-content: center;
     margin-top: 20px;
-    position: relative; /* Para posicionar los botones encima */
+    position: relative;
     width: 80%;
     max-width: 1200px;
   }
@@ -160,7 +167,7 @@ body.listPage {
   /* Contenedor donde van las tarjetas */
   .carousel {
     display: flex;
-    flex-wrap: wrap; /* Permite que las tarjetas se vayan a la siguiente fila */
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     overflow: hidden;
@@ -168,23 +175,23 @@ body.listPage {
     position: relative;
   }
   
-  /* Estilos base para cada tarjeta */
+  /* Tarjetas */
   .card {
     background-color: #fff;     /* Fondo claro */
     color: #333;                /* Texto oscuro */
     border-radius: 10px;
-    margin: 20px;               /* Espacio arriba, abajo y a los lados */
+    margin: 20px;
     padding: 20px;
     min-width: 250px;
     max-width: 300px;
     text-align: center;
     flex-shrink: 0;
     transition: transform 0.3s ease, background-color 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Sombra más suave */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   }
   
   /* Tarjeta resaltada (la del centro) */
   .card.active {
     transform: scale(1.05);
-    background-color: #f9f9f9;  /* Un gris muy clarito */
+    background-color: #f9f9f9;
   }

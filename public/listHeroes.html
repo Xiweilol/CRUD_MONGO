@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lista de Heroes</title>
+  </head>
+  <body>
+    <h1>Lista de Heroes de LOL</h1>
+    <ul id="heroList"></ul>
+
+    <script>
+      const API_URL = "https://crud-mongo-rsxf.onrender.com/api/characters";
+
+      async function fetchHeroes() {
+        try {
+          const res = await fetch(API_URL);
+          const heroes = await res.json();
+          const list = document.getElementById('heroList');
+          list.innerHTML = "";
+          heroes.forEach(hero => {
+            const li = document.createElement('li');
+            li.textContent = `Nombre: ${hero.name} | Habilidades: ${hero.abilities.join(", ")} | Nivel: ${hero.level}`;
+            list.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error al obtener heroes:", error);
+        }
+      }
+
+      // Cargamos la lista al iniciar la página
+      fetchHeroes();
+    </script>
+  </body>
+</html>

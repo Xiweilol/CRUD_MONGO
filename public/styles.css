@@ -29,7 +29,7 @@ body {
     flex-direction: column;
     justify-content: center; /* Centrado vertical */
     align-items: center;     /* Centrado horizontal */
-    min-height: 100vh;       /* Ocupa la altura completa de la ventana */
+    color: #fff;       /* Ocupa la altura completa de la ventana */
   }
 
   body.index-container{

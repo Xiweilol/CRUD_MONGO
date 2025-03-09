@@ -21,6 +21,15 @@ function sanitize(str) {
   });
 }
 
+/**
+ * Función para detectar si hay etiquetas HTML o scripts.
+ * Devuelve true si se detecta alguna etiqueta HTML.
+ */
+function contieneEtiquetas(str) {
+  if (typeof str !== "string") return false;
+  return /<\/?[a-z][\s\S]*>/i.test(str);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
   /*****************************************************
@@ -38,6 +47,18 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("ability3").value,
           document.getElementById("ability4").value,
         ];
+
+        // Validar que el nombre y las habilidades no contengan etiquetas HTML o scripts
+        if (contieneEtiquetas(name)) {
+          alert("El campo 'Nombre' no debe contener etiquetas HTML o scripts.");
+          return;
+        }
+        for (let i = 0; i < abilities.length; i++) {
+          if (contieneEtiquetas(abilities[i])) {
+            alert(`La habilidad ${i + 1} no debe contener etiquetas HTML o scripts.`);
+            return;
+          }
+        }
 
         // Validación del nivel
         const levelValue = document.getElementById("heroLevel").value;
@@ -58,10 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify({ name, abilities, level }),
           });
           if (res.ok) {
-            alert("Heroe agregado correctamente");
+            alert("Héroe agregado correctamente");
             addHeroForm.reset();
           } else {
-            alert("Error al agregar el heroe");
+            alert("Error al agregar el héroe");
           }
         } catch (error) {
           console.error("Error:", error);
@@ -105,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
           renderCarousel();
         }
       } catch (error) {
-        console.error("Error al obtener heroes:", error);
+        console.error("Error al obtener héroes:", error);
         carousel.innerHTML = "<p>Error al cargar los héroes.</p>";
       }
     }
@@ -221,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
           heroList.appendChild(card);
         });
       } catch (error) {
-        console.error("Error al obtener heroes:", error);
+        console.error("Error al obtener héroes:", error);
       }
     }
 
@@ -233,6 +254,19 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(`ab3-${id}`).value,
         document.getElementById(`ab4-${id}`).value,
       ];
+      
+      // Validar que el nombre y las habilidades no contengan etiquetas HTML o scripts
+      if (contieneEtiquetas(name)) {
+        alert("El campo 'Nombre' no debe contener etiquetas HTML o scripts.");
+        return;
+      }
+      for (let i = 0; i < abilities.length; i++) {
+        if (contieneEtiquetas(abilities[i])) {
+          alert(`La habilidad ${i + 1} no debe contener etiquetas HTML o scripts.`);
+          return;
+        }
+      }
+
       const levelValue = document.getElementById(`level-${id}`).value;
       const level = Number(levelValue);
 
@@ -252,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ name, abilities, level }),
         });
         if (res.ok) {
-          alert("Heroe actualizado");
+          alert("Héroe actualizado");
           fetchHeroes();
         } else {
           alert("Error al actualizar");
@@ -268,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "DELETE",
         });
         if (res.ok) {
-          alert("Heroe eliminado");
+          alert("Héroe eliminado");
           fetchHeroes();
         } else {
           alert("Error al eliminar");

@@ -208,6 +208,26 @@ body.editPage {
     /* Fondo con overlay oscuro */
     background:
       linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+      url("img/fondo_edit.jpg") no-repeat center center fixed;
+    background-size: cover;
+  }
+  
+  /****************************************************
+ * ESTILOS PARA LA PÁGINA DE EDICIÓN (editPage)
+ ****************************************************/
+/****************************************************
+ * ESTILOS PARA LA PÁGINA DE EDICIÓN (editPage)
+ ****************************************************/
+ body.editPage {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  
+    /* Fondo con overlay oscuro */
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
       url("img/fondo_editHeroes.jpg") no-repeat center center fixed;
     background-size: cover;
   }

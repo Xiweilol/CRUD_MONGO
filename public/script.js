@@ -171,13 +171,12 @@ if (document.body.classList.contains("listPage")) {
     fetchHeroes();
   }
 
-  /*****************************************************
-   * 3) PÁGINA: EDITAR/ELIMINAR HÉROES (editPage)
-   *****************************************************/
-  if (document.body.classList.contains("editPage")) {
+/*****************************************************
+ * PÁGINA: EDITAR/ELIMINAR HÉROES (editPage)
+ *****************************************************/
+if (document.body.classList.contains("editPage")) {
     const heroList = document.getElementById("heroList");
   
-    // Función para obtener y renderizar héroes en modo edición
     async function fetchHeroes() {
       try {
         const res = await fetch(API_URL);
@@ -214,6 +213,7 @@ if (document.body.classList.contains("listPage")) {
         console.error("Error al obtener heroes:", error);
       }
     }
+  
 
     // Función global para actualizar
     window.updateHero = async function (id) {

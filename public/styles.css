@@ -160,9 +160,10 @@ body.listPage {
   /* Contenedor donde van las tarjetas */
   .carousel {
     display: flex;
+    flex-wrap: wrap; /* Permite que las tarjetas se vayan a la siguiente fila */
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Oculta el desborde */
+    overflow: hidden;
     width: 100%;
     position: relative;
   }

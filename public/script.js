@@ -51,24 +51,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /*****************************************************
-   * 2) PÁGINA: LISTA DE HÉROES (listPage) - CARRUSEL
-   *****************************************************/
-  if (document.body.classList.contains("listPage")) {
+ /*****************************************************
+ * 2) PÁGINA: LISTA DE HÉROES (listPage)
+ *****************************************************/
+if (document.body.classList.contains("listPage")) {
     const carousel = document.getElementById("carousel");
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
-
-    // Array donde guardaremos los héroes y el índice del “héroe central”
+  
     let heroesData = [];
     let currentIndex = 0;
-
+  
     // Obtener héroes del backend
     async function fetchHeroes() {
       try {
         const res = await fetch(API_URL);
         heroesData = await res.json();
-
+  
         if (heroesData.length === 0) {
           carousel.innerHTML = "<p>No hay héroes registrados.</p>";
         } else {
@@ -79,63 +78,82 @@ document.addEventListener("DOMContentLoaded", () => {
         carousel.innerHTML = "<p>Error al cargar los héroes.</p>";
       }
     }
-
-    // Renderizar las tarjetas del carrusel
+  
+    // Renderizar la vista según la cantidad de héroes
     function renderCarousel() {
-      // Limpiamos el carrusel
+      // Limpiamos el contenedor
       carousel.innerHTML = "";
-
-      // Calculamos índices para mostrar la tarjeta izquierda, central y derecha
-      const leftIndex = (currentIndex - 1 + heroesData.length) % heroesData.length;
-      const rightIndex = (currentIndex + 1) % heroesData.length;
-
-      // Por defecto mostramos 3 tarjetas (si hay suficientes)
-      let indicesToShow = [leftIndex, currentIndex, rightIndex];
-
-      // Si hay menos de 3 héroes, ajustamos
-      if (heroesData.length === 1) {
-        indicesToShow = [currentIndex];
-      } else if (heroesData.length === 2) {
-        indicesToShow = [currentIndex, rightIndex];
-      }
-
-      // Creamos cada tarjeta
-      indicesToShow.forEach((idx) => {
-        const hero = heroesData[idx];
-        const card = document.createElement("div");
-        card.classList.add("card");
-
-        // Resaltamos la tarjeta central con la clase "active"
-        if (idx === currentIndex) {
-          card.classList.add("active");
+  
+      // Si hay MÁS de 3 héroes, ocultamos botones y mostramos todos en una sola vista
+      if (heroesData.length > 3) {
+        prevBtn.style.display = "none";
+        nextBtn.style.display = "none";
+  
+        heroesData.forEach((hero) => {
+          const card = document.createElement("div");
+          card.classList.add("card");
+          card.innerHTML = `
+            <h2>${hero.name}</h2>
+            <p><strong>Habilidades:</strong> ${hero.abilities.join(", ")}</p>
+            <p><strong>Nivel:</strong> ${hero.level}</p>
+          `;
+          carousel.appendChild(card);
+        });
+      } 
+      // De lo contrario, mostramos el carrusel con hasta 3 tarjetas
+      else {
+        prevBtn.style.display = "inline-block";
+        nextBtn.style.display = "inline-block";
+  
+        // Calculamos índices de la tarjeta izquierda, central y derecha
+        const leftIndex = (currentIndex - 1 + heroesData.length) % heroesData.length;
+        const rightIndex = (currentIndex + 1) % heroesData.length;
+  
+        // Por defecto, mostramos [left, current, right]
+        let indicesToShow = [leftIndex, currentIndex, rightIndex];
+  
+        // Ajustes si hay menos de 3 héroes
+        if (heroesData.length === 1) {
+          indicesToShow = [currentIndex];
+        } else if (heroesData.length === 2) {
+          indicesToShow = [currentIndex, rightIndex];
         }
-
-        // Contenido de la tarjeta
-        card.innerHTML = `
-          <h2>${hero.name}</h2>
-          <p><strong>Habilidades:</strong> ${hero.abilities.join(", ")}</p>
-          <p><strong>Nivel:</strong> ${hero.level}</p>
-        `;
-
-        carousel.appendChild(card);
-      });
+  
+        indicesToShow.forEach((idx) => {
+          const hero = heroesData[idx];
+          const card = document.createElement("div");
+          card.classList.add("card");
+  
+          // Resaltar la tarjeta central
+          if (idx === currentIndex) {
+            card.classList.add("active");
+          }
+  
+          card.innerHTML = `
+            <h2>${hero.name}</h2>
+            <p><strong>Habilidades:</strong> ${hero.abilities.join(", ")}</p>
+            <p><strong>Nivel:</strong> ${hero.level}</p>
+          `;
+          carousel.appendChild(card);
+        });
+      }
     }
-
-    // Funciones de navegación
+  
+    // Funciones de navegación para el carrusel
     function nextHero() {
       currentIndex = (currentIndex + 1) % heroesData.length;
       renderCarousel();
     }
-
+  
     function prevHero() {
       currentIndex = (currentIndex - 1 + heroesData.length) % heroesData.length;
       renderCarousel();
     }
-
+  
     // Eventos de los botones
     if (prevBtn) prevBtn.addEventListener("click", prevHero);
     if (nextBtn) nextBtn.addEventListener("click", nextHero);
-
+  
     // Iniciar
     fetchHeroes();
   }

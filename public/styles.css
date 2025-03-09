@@ -170,20 +170,21 @@ body.listPage {
   
   /* Estilos base para cada tarjeta */
   .card {
-    background-color: #2b2b2b;
+    background-color: #fff;     /* Fondo claro */
+    color: #333;                /* Texto oscuro */
     border-radius: 10px;
-    margin: 0 10px;
+    margin: 20px;               /* Espacio arriba, abajo y a los lados */
     padding: 20px;
     min-width: 250px;
     max-width: 300px;
     text-align: center;
-    flex-shrink: 0; /* Evita que se encojan */
+    flex-shrink: 0;
     transition: transform 0.3s ease, background-color 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Sombra más suave */
   }
   
   /* Tarjeta resaltada (la del centro) */
   .card.active {
-    transform: scale(1.1);
-    background-color: #333;
+    transform: scale(1.05);
+    background-color: #f9f9f9;  /* Un gris muy clarito */
   }

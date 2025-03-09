@@ -62,6 +62,17 @@ if (document.body.classList.contains("listPage")) {
     let heroesData = [];
     let currentIndex = 0;
   
+    // Función para renderizar la lista de habilidades
+    function renderAbilitiesList(abilities) {
+      return `
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          ${abilities
+            .map((ability, i) => `<li>Habilidad ${i + 1}: ${ability}</li>`)
+            .join("")}
+        </ul>
+      `;
+    }
+  
     // Obtener héroes del backend
     async function fetchHeroes() {
       try {
@@ -94,7 +105,8 @@ if (document.body.classList.contains("listPage")) {
           card.classList.add("card");
           card.innerHTML = `
             <h2>${hero.name}</h2>
-            <p><strong>Habilidades:</strong> ${hero.abilities.join(", ")}</p>
+            <p><strong>Habilidades:</strong></p>
+            ${renderAbilitiesList(hero.abilities)}
             <p><strong>Nivel:</strong> ${hero.level}</p>
           `;
           carousel.appendChild(card);
@@ -131,7 +143,8 @@ if (document.body.classList.contains("listPage")) {
   
           card.innerHTML = `
             <h2>${hero.name}</h2>
-            <p><strong>Habilidades:</strong> ${hero.abilities.join(", ")}</p>
+            <p><strong>Habilidades:</strong></p>
+            ${renderAbilitiesList(hero.abilities)}
             <p><strong>Nivel:</strong> ${hero.level}</p>
           `;
           carousel.appendChild(card);
@@ -151,8 +164,8 @@ if (document.body.classList.contains("listPage")) {
     }
   
     // Eventos de los botones
-    if (prevBtn) prevBtn.addEventListener("click", prevHero);
-    if (nextBtn) nextBtn.addEventListener("click", nextHero);
+    if (prevBtn) prevBtn.addEventListener("click", nextHero);
+    if (nextBtn) nextBtn.addEventListener("click", prevHero);
   
     // Iniciar
     fetchHeroes();

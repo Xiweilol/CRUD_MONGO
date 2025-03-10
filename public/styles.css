@@ -296,3 +296,17 @@ body.listPage {
   .edit-card button:hover {
     background-color: #0056b3;
   }
+  /* Estilos para los campos de select de Pasivo y Runas */
+#addHeroForm select {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+}

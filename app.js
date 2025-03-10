@@ -52,7 +52,7 @@ app.post(
           if (/<\/?[a-z][\s\S]*>/i.test(ability)) {
             throw new Error('Las habilidades no deben contener etiquetas HTML o scripts.');
           }
-        });
+       });
         return true;
       }),
     // Validación de "level" como número entre 1 y 18
@@ -64,6 +64,21 @@ app.post(
           throw new Error('El nivel debe estar entre 1 y 18.');
         }
         return true;
+      }),
+    // Validación de "pasivo": debe ser un string no vacío y sin HTML
+    body('pasivo')
+      .notEmpty().withMessage('El pasivo es obligatorio.')
+      .custom(noHtml),
+    // Validación de "runas": debe ser un arreglo de strings sin HTML y con al menos un elemento
+    body('runas')
+      .isArray({ min: 1 }).withMessage('Las runas deben ser un arreglo con al menos un elemento.')
+      .custom(runas => {
+        runas.forEach(runa => {
+          if (/<\/?[a-z][\s\S]*>/i.test(runa)) {
+            throw new Error('Las runas no deben contener etiquetas HTML o scripts.');
+          }
+        });
+        return true;
       })
   ],
   async (req, res) => {
@@ -73,8 +88,14 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const { name, abilities, level } = req.body;
-      const newCharacter = await Character.create({ name, abilities, level: Number(level) });
+      const { name, abilities, level, pasivo, runas } = req.body;
+      const newCharacter = await Character.create({ 
+        name, 
+        abilities, 
+        level: Number(level),
+        pasivo,
+        runas
+      });
       return res.status(201).json(newCharacter);
     } catch (error) {
       if (error.name === 'ValidationError') {
@@ -126,6 +147,23 @@ app.put(
           throw new Error('El nivel debe estar entre 1 y 18.');
         }
         return true;
+      }),
+    // Validación opcional para "pasivo"
+    body('pasivo')
+      .optional()
+      .notEmpty().withMessage('El pasivo no debe estar vacío.')
+      .custom(noHtml),
+    // Validación opcional para "runas"
+    body('runas')
+      .optional()
+      .isArray({ min: 1 }).withMessage('Las runas deben ser un arreglo con al menos un elemento.')
+      .custom(runas => {
+        runas.forEach(runa => {
+          if (/<\/?[a-z][\s\S]*>/i.test(runa)) {
+            throw new Error('Las runas no deben contener etiquetas HTML o scripts.');
+          }
+        });
+        return true;
       })
   ],
   async (req, res) => {
@@ -134,11 +172,13 @@ app.put(
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const { name, abilities, level } = req.body;
+      const { name, abilities, level, pasivo, runas } = req.body;
       const updatedData = {};
       if (name !== undefined) updatedData.name = name;
       if (abilities !== undefined) updatedData.abilities = abilities;
       if (level !== undefined) updatedData.level = Number(level);
+      if (pasivo !== undefined) updatedData.pasivo = pasivo;
+      if (runas !== undefined) updatedData.runas = runas;
       
       const updatedCharacter = await Character.findByIdAndUpdate(
         req.params.id,

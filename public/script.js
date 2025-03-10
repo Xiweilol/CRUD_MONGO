@@ -47,8 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("ability3").value,
           document.getElementById("ability4").value,
         ];
-
-        // Validar que el nombre y las habilidades no contengan etiquetas HTML o scripts
+  
+        // Validaciones de nombre y habilidades...
         if (contieneEtiquetas(name)) {
           alert("El campo 'Nombre' no debe contener etiquetas HTML o scripts.");
           return;
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
         }
-
+  
         // Validación del nivel
         const levelValue = document.getElementById("heroLevel").value;
         const level = Number(levelValue);
@@ -71,12 +71,17 @@ document.addEventListener("DOMContentLoaded", () => {
           alert("El nivel debe estar entre 1 y 18.");
           return;
         }
-
+  
+        // NUEVO: Obtener valores para pasivo y runas
+        const pasivo = document.getElementById("heroPasivo").value;
+        const runasSelect = document.getElementById("heroRunas");
+        const runas = Array.from(runasSelect.selectedOptions).map(option => option.value);
+  
         try {
           const res = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, abilities, level }),
+            body: JSON.stringify({ name, abilities, level, pasivo, runas }),
           });
           if (res.ok) {
             alert("Héroe agregado correctamente");
@@ -210,30 +215,43 @@ document.addEventListener("DOMContentLoaded", () => {
    *****************************************************/
   if (document.body.classList.contains("editPage")) {
     const heroList = document.getElementById("heroList");
-
+  
     async function fetchHeroes() {
       try {
         const res = await fetch(API_URL);
         const heroes = await res.json();
         heroList.innerHTML = "";
-
+  
         heroes.forEach((hero) => {
           const card = document.createElement("div");
           card.classList.add("edit-card");
-
+  
           card.innerHTML = `
             <h2>Nombre:</h2>
             <input type="text" value="${sanitize(hero.name)}" id="name-${hero._id}" />
-
+  
             <h3>Habilidades:</h3>
             <input type="text" value="${sanitize(hero.abilities[0])}" id="ab1-${hero._id}" />
             <input type="text" value="${sanitize(hero.abilities[1])}" id="ab2-${hero._id}" />
             <input type="text" value="${sanitize(hero.abilities[2])}" id="ab3-${hero._id}" />
             <input type="text" value="${sanitize(hero.abilities[3])}" id="ab4-${hero._id}" />
-
+  
             <h3>Nivel:</h3>
             <input type="number" value="${hero.level}" id="level-${hero._id}" min="1" max="18" />
-
+  
+            <!-- NUEVO: Campo para Pasivo -->
+            <h3>Pasivo:</h3>
+            <input type="text" value="${sanitize(hero.pasivo)}" id="pasivo-${hero._id}" />
+  
+            <!-- NUEVO: Campo para Runas (multi-select) -->
+            <h3>Runas:</h3>
+            <select id="runas-${hero._id}" multiple required>
+              <option value="runa1" ${hero.runas && hero.runas.includes("runa1") ? "selected" : ""}>Runa 1</option>
+              <option value="runa2" ${hero.runas && hero.runas.includes("runa2") ? "selected" : ""}>Runa 2</option>
+              <option value="runa3" ${hero.runas && hero.runas.includes("runa3") ? "selected" : ""}>Runa 3</option>
+              <!-- Agrega más opciones si es necesario -->
+            </select>
+  
             <div class="buttons">
               <button onclick="updateHero('${hero._id}')">Guardar cambios</button>
               <button onclick="deleteHero('${hero._id}')">Eliminar</button>
@@ -245,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al obtener héroes:", error);
       }
     }
-
+  
     window.updateHero = async function (id) {
       const name = document.getElementById(`name-${id}`).value;
       const abilities = [
@@ -254,8 +272,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(`ab3-${id}`).value,
         document.getElementById(`ab4-${id}`).value,
       ];
-      
-      // Validar que el nombre y las habilidades no contengan etiquetas HTML o scripts
+  
+      // Validaciones (nombre y habilidades)
       if (contieneEtiquetas(name)) {
         alert("El campo 'Nombre' no debe contener etiquetas HTML o scripts.");
         return;
@@ -266,10 +284,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
       }
-
+  
+      // Validación del nivel
       const levelValue = document.getElementById(`level-${id}`).value;
       const level = Number(levelValue);
-
       if (isNaN(level)) {
         alert("El campo 'Nivel' debe ser un número válido.");
         return;
@@ -278,12 +296,17 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("El nivel debe estar entre 1 y 18.");
         return;
       }
-
+  
+      // NUEVO: Obtener valores para pasivo y runas
+      const pasivo = document.getElementById(`pasivo-${id}`).value;
+      const runasSelect = document.getElementById(`runas-${id}`);
+      const runas = Array.from(runasSelect.selectedOptions).map(option => option.value);
+  
       try {
         const res = await fetch(`${API_URL}/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, abilities, level }),
+          body: JSON.stringify({ name, abilities, level, pasivo, runas }),
         });
         if (res.ok) {
           alert("Héroe actualizado");
@@ -295,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al actualizar:", error);
       }
     };
-
+  
     window.deleteHero = async function (id) {
       try {
         const res = await fetch(`${API_URL}/${id}`, {
@@ -311,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al eliminar:", error);
       }
     };
-
+  
     fetchHeroes();
-  }
-});
+  } // Fin del if de editPage
+});  

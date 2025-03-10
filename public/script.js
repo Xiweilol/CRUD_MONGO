@@ -239,9 +239,17 @@ document.addEventListener("DOMContentLoaded", () => {
             <h3>Nivel:</h3>
             <input type="number" value="${hero.level}" id="level-${hero._id}" min="1" max="18" />
   
-            <!-- NUEVO: Campo para Pasivo -->
+            <!-- NUEVO: Campo para Pasivo (select) -->
             <h3>Pasivo:</h3>
-            <input type="text" value="${sanitize(hero.pasivo)}" id="pasivo-${hero._id}" />
+            <select id="pasivo-${hero._id}" required>
+              <option value="">Selecciona un pasivo</option>
+              <option value="pasivo1" ${hero.pasivo === "pasivo1" ? "selected" : ""}>Pasivo 1</option>
+              <option value="pasivo2" ${hero.pasivo === "pasivo2" ? "selected" : ""}>Pasivo 2</option>
+              <option value="pasivo3" ${hero.pasivo === "pasivo3" ? "selected" : ""}>Pasivo 3</option>
+              <option value="pasivo4" ${hero.pasivo === "pasivo4" ? "selected" : ""}>Pasivo 4</option>
+              <option value="pasivo5" ${hero.pasivo === "pasivo5" ? "selected" : ""}>Pasivo 5</option>
+              <option value="pasivo6" ${hero.pasivo === "pasivo6" ? "selected" : ""}>Pasivo 6</option>
+            </select>
   
             <!-- NUEVO: Campo para Runas (multi-select) -->
             <h3>Runas:</h3>
@@ -249,7 +257,10 @@ document.addEventListener("DOMContentLoaded", () => {
               <option value="runa1" ${hero.runas && hero.runas.includes("runa1") ? "selected" : ""}>Runa 1</option>
               <option value="runa2" ${hero.runas && hero.runas.includes("runa2") ? "selected" : ""}>Runa 2</option>
               <option value="runa3" ${hero.runas && hero.runas.includes("runa3") ? "selected" : ""}>Runa 3</option>
-              <!-- Agrega más opciones si es necesario -->
+              <option value="runa4" ${hero.runas && hero.runas.includes("runa4") ? "selected" : ""}>Runa 4</option>
+              <option value="runa5" ${hero.runas && hero.runas.includes("runa5") ? "selected" : ""}>Runa 5</option>
+              <option value="runa6" ${hero.runas && hero.runas.includes("runa6") ? "selected" : ""}>Runa 6</option>
+              <option value="runa7" ${hero.runas && hero.runas.includes("runa7") ? "selected" : ""}>Runa 7</option>
             </select>
   
             <div class="buttons">
@@ -336,5 +347,5 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   
     fetchHeroes();
-  } // Fin del if de editPage
+  }
 });  

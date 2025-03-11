@@ -40,14 +40,42 @@ document.addEventListener("DOMContentLoaded", () => {
     if (addHeroForm) {
       addHeroForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById("heroName").value;
+
+        // Verificar que cada campo exista antes de leer .value
+        const heroNameInput = document.getElementById("heroName");
+        if (!heroNameInput) {
+          alert("No se encontró el campo 'Nombre' en el formulario.");
+          return;
+        }
+        const name = heroNameInput.value;
+
+        const ability1Input = document.getElementById("ability1");
+        if (!ability1Input) {
+          alert("No se encontró el campo 'Habilidad 1'.");
+          return;
+        }
+        const ability2Input = document.getElementById("ability2");
+        if (!ability2Input) {
+          alert("No se encontró el campo 'Habilidad 2'.");
+          return;
+        }
+        const ability3Input = document.getElementById("ability3");
+        if (!ability3Input) {
+          alert("No se encontró el campo 'Habilidad 3'.");
+          return;
+        }
+        const ability4Input = document.getElementById("ability4");
+        if (!ability4Input) {
+          alert("No se encontró el campo 'Habilidad 4'.");
+          return;
+        }
         const abilities = [
-          document.getElementById("ability1").value,
-          document.getElementById("ability2").value,
-          document.getElementById("ability3").value,
-          document.getElementById("ability4").value,
+          ability1Input.value,
+          ability2Input.value,
+          ability3Input.value,
+          ability4Input.value,
         ];
-  
+
         // Validaciones de nombre y habilidades...
         if (contieneEtiquetas(name)) {
           alert("El campo 'Nombre' no debe contener etiquetas HTML o scripts.");
@@ -59,9 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
         }
-  
-        // Validación del nivel
-        const levelValue = document.getElementById("heroLevel").value;
+
+        const heroLevelInput = document.getElementById("heroLevel");
+        if (!heroLevelInput) {
+          alert("No se encontró el campo 'Nivel'.");
+          return;
+        }
+        const levelValue = heroLevelInput.value;
         const level = Number(levelValue);
         if (isNaN(level)) {
           alert("El campo 'Nivel' debe ser un número válido.");
@@ -71,12 +103,21 @@ document.addEventListener("DOMContentLoaded", () => {
           alert("El nivel debe estar entre 1 y 18.");
           return;
         }
-  
-        // NUEVO: Obtener valores para pasivo y runas
-        const pasivo = document.getElementById("heroPasivo").value;
+
+        const heroPasivoInput = document.getElementById("heroPasivo");
+        if (!heroPasivoInput) {
+          alert("No se encontró el campo 'Pasivo'.");
+          return;
+        }
+        const pasivo = heroPasivoInput.value;
+
         const runasSelect = document.getElementById("heroRunas");
+        if (!runasSelect) {
+          alert("No se encontró el campo 'Runas'.");
+          return;
+        }
         const runas = Array.from(runasSelect.selectedOptions).map(option => option.value);
-  
+
         try {
           const res = await fetch(API_URL, {
             method: "POST",
@@ -215,30 +256,30 @@ document.addEventListener("DOMContentLoaded", () => {
    *****************************************************/
   if (document.body.classList.contains("editPage")) {
     const heroList = document.getElementById("heroList");
-  
+
     async function fetchHeroes() {
       try {
         const res = await fetch(API_URL);
         const heroes = await res.json();
         heroList.innerHTML = "";
-  
+
         heroes.forEach((hero) => {
           const card = document.createElement("div");
           card.classList.add("edit-card");
-  
+
           card.innerHTML = `
             <h2>Nombre:</h2>
             <input type="text" value="${sanitize(hero.name)}" id="name-${hero._id}" />
-  
+
             <h3>Habilidades:</h3>
             <input type="text" value="${sanitize(hero.abilities[0])}" id="ab1-${hero._id}" />
             <input type="text" value="${sanitize(hero.abilities[1])}" id="ab2-${hero._id}" />
             <input type="text" value="${sanitize(hero.abilities[2])}" id="ab3-${hero._id}" />
             <input type="text" value="${sanitize(hero.abilities[3])}" id="ab4-${hero._id}" />
-  
+
             <h3>Nivel:</h3>
             <input type="number" value="${hero.level}" id="level-${hero._id}" min="1" max="18" />
-  
+
             <!-- NUEVO: Campo para Pasivo (select) -->
             <h3>Pasivo:</h3>
             <select id="pasivo-${hero._id}" required>
@@ -250,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <option value="pasivo5" ${hero.pasivo === "pasivo5" ? "selected" : ""}>Pasivo 5</option>
               <option value="pasivo6" ${hero.pasivo === "pasivo6" ? "selected" : ""}>Pasivo 6</option>
             </select>
-  
+
             <!-- NUEVO: Campo para Runas (multi-select) -->
             <h3>Runas:</h3>
             <select id="runas-${hero._id}" multiple required>
@@ -262,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <option value="runa6" ${hero.runas && hero.runas.includes("runa6") ? "selected" : ""}>Runa 6</option>
               <option value="runa7" ${hero.runas && hero.runas.includes("runa7") ? "selected" : ""}>Runa 7</option>
             </select>
-  
+
             <div class="buttons">
               <button onclick="updateHero('${hero._id}')">Guardar cambios</button>
               <button onclick="deleteHero('${hero._id}')">Eliminar</button>
@@ -274,16 +315,31 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al obtener héroes:", error);
       }
     }
-  
+
     window.updateHero = async function (id) {
-      const name = document.getElementById(`name-${id}`).value;
+      // Verificar que los campos existan antes de usarlos
+      const nameEl = document.getElementById(`name-${id}`);
+      if (!nameEl) {
+        alert("No se encontró el campo 'Nombre'.");
+        return;
+      }
+      const name = nameEl.value;
+
+      const ab1El = document.getElementById(`ab1-${id}`);
+      const ab2El = document.getElementById(`ab2-${id}`);
+      const ab3El = document.getElementById(`ab3-${id}`);
+      const ab4El = document.getElementById(`ab4-${id}`);
+      if (!ab1El || !ab2El || !ab3El || !ab4El) {
+        alert("No se encontró alguno de los campos de habilidades.");
+        return;
+      }
       const abilities = [
-        document.getElementById(`ab1-${id}`).value,
-        document.getElementById(`ab2-${id}`).value,
-        document.getElementById(`ab3-${id}`).value,
-        document.getElementById(`ab4-${id}`).value,
+        ab1El.value,
+        ab2El.value,
+        ab3El.value,
+        ab4El.value,
       ];
-  
+
       // Validaciones (nombre y habilidades)
       if (contieneEtiquetas(name)) {
         alert("El campo 'Nombre' no debe contener etiquetas HTML o scripts.");
@@ -295,9 +351,13 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
       }
-  
-      // Validación del nivel
-      const levelValue = document.getElementById(`level-${id}`).value;
+
+      const levelEl = document.getElementById(`level-${id}`);
+      if (!levelEl) {
+        alert("No se encontró el campo 'Nivel'.");
+        return;
+      }
+      const levelValue = levelEl.value;
       const level = Number(levelValue);
       if (isNaN(level)) {
         alert("El campo 'Nivel' debe ser un número válido.");
@@ -307,12 +367,21 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("El nivel debe estar entre 1 y 18.");
         return;
       }
-  
-      // NUEVO: Obtener valores para pasivo y runas
-      const pasivo = document.getElementById(`pasivo-${id}`).value;
+
+      const pasivoEl = document.getElementById(`pasivo-${id}`);
+      if (!pasivoEl) {
+        alert("No se encontró el campo 'Pasivo'.");
+        return;
+      }
+      const pasivo = pasivoEl.value;
+
       const runasSelect = document.getElementById(`runas-${id}`);
+      if (!runasSelect) {
+        alert("No se encontró el campo 'Runas'.");
+        return;
+      }
       const runas = Array.from(runasSelect.selectedOptions).map(option => option.value);
-  
+
       try {
         const res = await fetch(`${API_URL}/${id}`, {
           method: "PUT",
@@ -329,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al actualizar:", error);
       }
     };
-  
+
     window.deleteHero = async function (id) {
       try {
         const res = await fetch(`${API_URL}/${id}`, {
@@ -345,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al eliminar:", error);
       }
     };
-  
+
     fetchHeroes();
   }
-});  
+});

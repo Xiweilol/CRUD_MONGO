@@ -1,5 +1,3 @@
-// script.js
-
 // URL de la API (ajusta según tu backend en Render)
 const API_URL = "https://crud-mongo-rsxf.onrender.com/api/characters";
 
@@ -348,4 +346,4 @@ document.addEventListener("DOMContentLoaded", () => {
   
     fetchHeroes();
   }
-});  
+});

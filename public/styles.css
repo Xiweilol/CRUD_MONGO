@@ -506,3 +506,114 @@ body.empezar-page {
 .form-container form button[type="submit"]:hover {
   background-color: #b82427;
 }
+
+/* ======================================================
+   ESTILOS PARA LA PÁGINA DE LOGIN
+====================================================== */
+body.login-page {
+  /* Ajusta la imagen de fondo que desees para esta página */
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("img/login-fondo.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+}
+
+/* Sección de login (centrada) */
+.login-section {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;     /* Centra verticalmente */
+  min-height: calc(100vh - 80px); /* Resta el alto aproximado del header */
+  padding: 60px 20px;
+}
+
+/* Contenedor del formulario */
+.login-form-container {
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+  backdrop-filter: blur(5px);                /* Desenfoque */
+  padding: 40px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Título del formulario */
+.login-form-container h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #fff;
+  text-align: center;
+}
+
+/* Etiquetas (labels) */
+.login-form-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Inputs de texto y password */
+.login-form-container input[type="text"],
+.login-form-container input[type="password"] {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Recuerda / ¿Olvidaste contraseña? */
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+}
+
+.remember-me label {
+  margin-left: 5px;
+  color: #fff;
+}
+
+.remember-forgot a {
+  color: #fff;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+
+/* Botón de acceso en color rojo */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  background-color: #d72e30; /* Rojo */
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #b82427;
+}
+
+/* Pie del formulario: "¿No tienes una cuenta?" */
+.no-account {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.no-account a {
+  color: #fff;
+  text-decoration: underline;
+}
+

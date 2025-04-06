@@ -347,3 +347,103 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchHeroes();
   }
 });
+
+ /*****************************************************
+   * 4) PÁGINA: LOGIN.HTML (LOGIN)
+   *****************************************************/
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault(); // Evitamos el envío inmediato del formulario
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      // Validar que los campos no estén vacíos
+      if (username === "" || password === "") {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      // Validar que los campos no contengan etiquetas HTML o scripts
+      if (contieneEtiquetas(username) || contieneEtiquetas(password)) {
+        alert("Los campos no deben contener etiquetas HTML o scripts.");
+        return;
+      }
+
+      // Si todo es correcto, procede con el login
+      console.log("Login exitoso con:", username, password);
+
+    });
+  }
+});
+
+ /*****************************************************
+   * 5) PÁGINA: empezar.html (registro)
+   *****************************************************/
+ document.addEventListener("DOMContentLoaded", () => {
+  // Verifica si el formulario de registro existe en la página (id="registerForm")
+  const registerForm = document.getElementById("registroForm");
+  if (!registerForm) return; // Si no existe, no continúa para evitar errores en otras páginas
+
+  registerForm.addEventListener("submit", (e) => {
+    e.preventDefault(); // Evita el envío automático del formulario
+
+    // Obtener y limpiar los valores de cada campo
+    const nombre   = document.getElementById("nombre").value.trim();
+    const apellido = document.getElementById("apellido").value.trim();
+    const email    = document.getElementById("email").value.trim();
+    const telefono = document.getElementById("telefono").value.trim();
+    const rol      = document.getElementById("rol").value.trim();
+    const password = document.getElementById("password").value;
+
+    // Verificar que ninguno de los campos esté vacío
+    if (!nombre || !apellido || !email || !telefono || !rol || !password) {
+      alert("Por favor, completa todos los campos.");
+      return;
+    }
+
+    // Validar que ningún campo contenga etiquetas HTML o scripts
+    if (
+      contieneEtiquetas(nombre) ||
+      contieneEtiquetas(apellido) ||
+      contieneEtiquetas(email) ||
+      contieneEtiquetas(telefono) ||
+      contieneEtiquetas(rol) ||
+      contieneEtiquetas(password)
+    ) {
+      alert("Ningún campo debe contener etiquetas HTML o scripts.");
+      return;
+    }
+
+    // Validar el formato del email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      alert("El formato del email es incorrecto.");
+      return;
+    }
+
+    // Expresión regular para verificar que solo haya números
+    const soloNumeros = /^\d+$/;
+
+    // Validar que el teléfono contenga solo números
+    if (!soloNumeros.test(telefono)) {
+      alert("El teléfono debe contener solo números.");
+      return;
+    }
+
+    // Validar que el código de rol contenga solo números
+    if (!soloNumeros.test(rol)) {
+      alert("El código de rol debe contener solo números.");
+      return;
+    }
+
+    // Si todo es correcto, procede con el registro o envía los datos al servidor
+    console.log("Registro validado:", { nombre, apellido, email, telefono, rol, password });
+
+    // Para este ejemplo, mostramos un mensaje y luego limpiamos el formulario
+    alert("Registro exitoso");
+    registerForm.reset();
+  });
+});

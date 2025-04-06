@@ -24,19 +24,112 @@ body {
   }
   
   /* --- ESTILOS PARA EL INDEX (SI LOS NECESITAS) --- */
-  .index-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    align-items: center;     
-    color: #fff;       
-  }
-  
-  body.index-container {
-    background: url("img/fondo_index.jpg") no-repeat center center fixed; 
-    background-size: cover;
-    min-height: 100vh; 
-  }
+/* ===== Oscurecer el fondo con un gradiente sobre la imagen ===== */
+body.index-container {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("img/fondo_index.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== Encabezado (header) ===== */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Logo: contenedor + imagen de LoL + texto "LOL" */
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.lol-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+/* ===== Menú de navegación ===== */
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #ddd;
+}
+
+/* Ícono de la personita al lado de "Entrar" */
+.person-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+/* ===== Sección principal (hero-section) ===== */
+.hero-section {
+  margin-top: 100px;
+  color: #fff;
+  text-align: left;         /* Alinea el texto a la izquierda */
+  max-width: 600px;        /* Limita el ancho del bloque */
+  margin-left: 50px;       /* Separa el bloque del borde izquierdo */
+  margin-right: auto;      /* Hace que no crezca hacia la derecha */
+}
+
+
+/* Aumenta el tamaño de la frase "Descripción de LoL" */
+.hero-section h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5em;
+}
+
+/* Aumenta el tamaño del texto descriptivo */
+.hero-section p {
+  font-size: 1.3rem;
+  line-height: 1.5;
+  margin-bottom: 1em;
+}
+
+/* Botón de descargar */
+.descargar-btn {
+  padding: 15px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  background-color: #d72e30;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.descargar-btn:hover {
+  background-color: #b82427;
+}
+
+
+
   
   /* --- ESTILOS PARA LA PÁGINA DE "AGREGAR HEROE" --- */
   body.addPage {
@@ -323,4 +416,93 @@ body.listPage {
   border-radius: 5px;
   appearance: none;
   -webkit-appearance: none;
+}
+
+/* ======================================================
+   ESTILOS PARA LA PÁGINA DE EMPEZAR
+====================================================== */
+body.empezar-page {
+  /* Ajusta la imagen de fondo que desees para esta página */
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("img/salon-clase-lol.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  /* Puedes dejar margin y padding en 0 ya definidos globalmente */
+}
+
+.form-section {
+  display: flex;
+  justify-content: space-around;  /* Distribuye el contenido en dos columnas */
+  align-items: flex-start;
+  padding: 60px 20px;
+  min-height: calc(100vh - 80px); /* Ajusta según la altura de tu header */
+}
+
+.left-content {
+  max-width: 400px;
+  margin-right: 20px;
+}
+
+.left-content h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.left-content p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #fff;
+}
+
+.form-container {
+  background-color: rgba(255, 255, 255, 0.1);  /* Fondo semitransparente */
+  backdrop-filter: blur(5px);                  /* Desenfoque para efecto borroso */
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.form-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+/* Estilos para el formulario */
+.form-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-container form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.form-container form input {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Botón de enviar */
+.form-container form button[type="submit"] {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #d72e30;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-container form button[type="submit"]:hover {
+  background-color: #b82427;
 }

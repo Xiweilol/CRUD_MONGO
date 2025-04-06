@@ -1,17 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>6IV8 CRUD_Xivei</title>
+    <title>LOL - Inicio</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="index-container">
-    <h1>CRUD de Heroes de LOL</h1>
-    <button onclick="window.location.href='addHero.html'">Agregar Heroes de LOL</button>
-    <button onclick="window.location.href='listHeroes.html'">Ver Lista de Heroes</button>
-    <button onclick="window.location.href='editHero.html'">Editar y Eliminar Heroes</button>
+
+    <!-- Encabezado con logo (imagen + texto) y enlaces a la derecha -->
+    <header class="main-header">
+      <div class="logo">
+        <!-- Reemplaza "img/lol-logo.png" con la ruta real de tu ícono de LoL -->
+        <img src="img/lol-logo.png" alt="Logo LoL" class="lol-icon" />
+        <span>LOL</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#">
+          <!-- Reemplaza "img/usuario.png" con la ruta de tu ícono de personita -->
+          <img src="img/usuario.png" alt="Icono de Usuario" class="person-icon" />
+          Entrar
+        </a>
+        <a href="empezar.html">Empezar</a>
+      </nav>
+    </header>
+
+    <!-- Sección principal con texto y botón de descarga -->
+    <section class="hero-section">
+      <h1>Descripción de LoL</h1>
+      <p>
+        League of Legends es un juego de estrategia por equipos en el que dos equipos conformados
+        por cinco poderosos campeones se enfrentan para destruir la base del otro. Elige de entre 
+        más de 140 campeones para realizar jugadas épicas, asegurar asesinatos y destruir torretas
+        mientras avanzas hacia la victoria.
+      </p>
+      <button class="descargar-btn" onclick="window.location.href='https://www.leagueoflegends.com/es-mx/download/'">
+        Descargar
+      </button>
+    </section>
+
+    <noscript>
+      <p style="color: red;">
+        Este sitio requiere JavaScript para funcionar correctamente. 
+        Por favor, activa JavaScript en tu navegador.
+      </p>
+    </noscript>
   </body>
-  <noscript>
-    <p style="color: red;">Este sitio requiere JavaScript para funcionar correctamente. Por favor, activa JavaScript en tu navegador.</p>
-  </noscript>
 </html>

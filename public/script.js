@@ -390,7 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const errorMsg = data.error || (data.errors && data.errors.map(err => err.msg).join(", "));
           alert("Error en el inicio de sesión: " + errorMsg);
         } else {
-          // Guardamos el token en localStorage
+          // Guardamos el token en sessionStorage
           sessionStorage.setItem("token", data.token);
           
           // Guardamos el rol del usuario también
@@ -420,9 +420,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registroForm");
   if (!registerForm) return; // Si no existe, no continúa para evitar errores en otras páginas
 
-  // Código de administrador para verificación
-  const ADMIN_CODE = process.env.ADMIN_CODE;
-
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault(); // Evita el envío automático del formulario
 
@@ -431,10 +428,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const apellido = document.getElementById("apellido").value.trim();
     const email    = document.getElementById("email").value.trim();
     const telefono = document.getElementById("telefono").value.trim();
-    const rol      = document.getElementById("rol").value.trim();
+    // Aquí usamos el campo "rol" para enviar el código admin
+    const codigoAdmin = document.getElementById("rol").value.trim();
     const password = document.getElementById("password").value;
 
-    // Verificar que ninguno de los campos esté vacío
+    // Verificar que ninguno de los campos obligatorios esté vacío
     if (!nombre || !apellido || !email || !telefono || !password) {
       alert("Por favor, completa todos los campos obligatorios.");
       return;
@@ -446,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
       contieneEtiquetas(apellido) ||
       contieneEtiquetas(email) ||
       contieneEtiquetas(telefono) ||
-      contieneEtiquetas(rol) ||
+      (codigoAdmin && contieneEtiquetas(codigoAdmin)) ||
       contieneEtiquetas(password)
     ) {
       alert("Ningún campo debe contener etiquetas HTML o scripts.");
@@ -460,29 +458,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Expresión regular para verificar que solo haya números
+    // Expresión regular para verificar que solo haya números en el teléfono
     const soloNumeros = /^\d+$/;
-    // Validar que el teléfono contenga solo números
     if (!soloNumeros.test(telefono)) {
       alert("El teléfono debe contener solo números.");
       return;
     }
 
-    // Determinar el rol del usuario basado en el código de administrador
-    let userRole = "user"; // Por defecto, es un usuario normal
-
-    // Si se ingresó un código y coincide con el código admin, asignar rol admin
-    if (rol === ADMIN_CODE) {
-      userRole = "admin";
-    }
-
-    // Preparar el payload para enviar a la API
+    // Preparar el payload para enviar a la API. 
+    // El backend se encargará de asignar el rol "admin" o "user" según el código.
     const payload = { 
       nombre, 
       apellido, 
       email, 
       telefono, 
-      rol: userRole, // Enviamos el rol determinado
+      codigoAdmin, 
       password 
     };
 
@@ -509,3 +499,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+

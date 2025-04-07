@@ -216,17 +216,27 @@ app.delete('/api/characters/:id', async (req, res) => {
 app.post(
   '/api/register',
   [
-    body('nombre').notEmpty().withMessage('El nombre es obligatorio.').custom(noHtml),
-    body('apellido').notEmpty().withMessage('El apellido es obligatorio.').custom(noHtml),
-    body('email').isEmail().withMessage('Debe ser un email válido.'),
+    body('nombre')
+      .notEmpty().withMessage('El nombre es obligatorio.')
+      .custom(noHtml),
+    body('apellido')
+      .notEmpty().withMessage('El apellido es obligatorio.')
+      .custom(noHtml),
+    body('email')
+      .isEmail().withMessage('Debe ser un email válido.'),
     body('telefono')
       .notEmpty().withMessage('El teléfono es obligatorio.')
       .isNumeric().withMessage('El teléfono debe contener solo números.'),
-    // Ya no validamos que el rol sea numérico, ya que ahora enviamos directamente el string 'user' o 'admin'
-    body('rol')
+    // Eliminamos la validación del campo 'rol'
+    // Agregamos validación opcional para 'codigoAdmin' si es necesario:
+    body('codigoAdmin')
       .optional()
-      .isIn(['user', 'admin']).withMessage('Rol no válido'),
-    body('password').notEmpty().withMessage('La contraseña es obligatoria.')
+      .custom(value => {
+        // Puedes agregar validaciones adicionales si lo requieres
+        return true;
+      }),
+    body('password')
+      .notEmpty().withMessage('La contraseña es obligatoria.')
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -234,16 +244,16 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const { nombre, apellido, email, telefono, rol, password } = req.body;
+      const { nombre, apellido, email, telefono, password, codigoAdmin } = req.body;
+      
       // Verifica si ya existe un usuario con ese email
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({ error: 'El email ya está registrado.' });
       }
 
-      // Ya no necesitamos verificar el código admin aquí, eso lo hacemos en el frontend
-      // Usamos el rol que viene en la solicitud (se validó arriba que solo puede ser 'user' o 'admin')
-      const finalRole = rol || 'user'; // Si no se envía, asignamos 'user' por defecto
+      // Determina el rol basado en el código de administrador
+      const finalRole = (codigoAdmin && codigoAdmin === process.env.ADMIN_CODE) ? 'admin' : 'user';
 
       // Encripta la contraseña
       const salt = await bcrypt.genSalt(10);
@@ -272,8 +282,10 @@ app.post(
 app.post(
   '/api/login',
   [
-    body('username').notEmpty().withMessage('El usuario (email) es obligatorio.'),
-    body('password').notEmpty().withMessage('La contraseña es obligatoria.')
+    body('username')
+      .notEmpty().withMessage('El usuario (email) es obligatorio.'),
+    body('password')
+      .notEmpty().withMessage('La contraseña es obligatoria.')
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -297,7 +309,6 @@ app.post(
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
       
       // Modificamos la respuesta para incluir información básica del usuario
-      // Especialmente el rol, que necesitamos para la redirección en el frontend
       return res.json({ 
         token,
         user: {
@@ -313,6 +324,7 @@ app.post(
     }
   }
 );
+
 // Levantar el servidor
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

@@ -395,24 +395,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault(); // Evitamos el envío inmediato del formulario
+      e.preventDefault();
 
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
 
-      // Validar que los campos no estén vacíos
+      // Validar campos vacíos
       if (username === "" || password === "") {
         alert("Por favor, completa todos los campos.");
         return;
       }
 
-      // Validar que los campos no contengan etiquetas HTML o scripts
+      // Validar que no contengan etiquetas
       if (contieneEtiquetas(username) || contieneEtiquetas(password)) {
         alert("Los campos no deben contener etiquetas HTML o scripts.");
         return;
       }
 
-      // Se prepara el payload (se asume que username es el email)
       const payload = { username, password };
 
       try {
@@ -423,26 +422,38 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           body: JSON.stringify(payload)
         });
-        const data = await response.json();
+
+        // En fetch, un 400 no lanza un error automático, por eso checamos response.ok
         if (!response.ok) {
-          const errorMsg = data.error || (data.errors && data.errors.map(err => err.msg).join(", "));
+          // Convertimos la respuesta a JSON (o texto) para ver el error que envía el servidor
+          const errorData = await response.json().catch(() => ({}));
+          const errorMsg = errorData.error 
+            || (errorData.errors && errorData.errors.map(err => err.msg).join(", "))
+            || "Error desconocido";
+          
+          // Aquí “capturamos” el error y lo mostramos en un alert (o como gustes)
           alert("Error en el inicio de sesión: " + errorMsg);
-        } else {
-          // Guardamos el token en sessionStorage
-          sessionStorage.setItem("token", data.token);
-          // Guardamos el rol del usuario también
-          sessionStorage.setItem("userRole", data.user.rol);
-          
-          alert("¡Inicio de sesión exitoso!");
-          
-          // Redireccionamos según el rol
-          if (data.user.rol === "admin") {
-            window.location.href = "editHero.html";
-          } else {
-            window.location.href = "listHeroes.html";
-          }
+          return; // Evitamos seguir con el flujo
         }
+
+        // Si todo está ok, parseamos la data
+        const data = await response.json();
+
+        // Guardamos token y rol en sessionStorage
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("userRole", data.user.rol);
+
+        alert("¡Inicio de sesión exitoso!");
+
+        // Redirigimos según el rol
+        if (data.user.rol === "admin") {
+          window.location.href = "editHero.html";
+        } else {
+          window.location.href = "listHeroes.html";
+        }
+
       } catch (error) {
+        // Aquí capturamos cualquier otro tipo de error (de conexión, etc.)
         console.error("Error de conexión:", error);
         alert("Error en la conexión. Intenta nuevamente.");
       }

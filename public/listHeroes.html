@@ -2,29 +2,50 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Lista de Heroes</title>
+    <title>Lista de Héroes</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body class="listPage">
-    <button onclick="window.location.href='index.html'">Volver al Inicio</button>
-    <h1>Lista de Heroes de LOL</h1>
 
-    <!-- Contenedor general del carrusel -->
-    <div class="carousel-container">
-      <!-- Botón "Anterior" -->
-      <button id="prevBtn" class="carousel-btn">‹</button>
+    <!-- Barra superior fija -->
+    <header class="main-header">
+      <div class="logo">
+        <img src="img/lol-logo.png" alt="Logo LoL" class="lol-icon" />
+        <span>LOL</span>
+      </div>
+      <nav class="nav-links">
+        <a href="login.html">
+          <img src="img/usuario.png" alt="Icono de Usuario" class="person-icon" />
+          Entrar
+        </a>
+        <a href="empezar.html">Empezar</a>
+        <a href="index.html">Index</a>
+      </nav>
+    </header>
 
-      <!-- Carrusel (aquí se inyectan las tarjetas con JS) -->
-      <div id="carousel" class="carousel"></div>
+    <!-- Contenedor principal (sin el botón "Volver al Inicio") -->
+    <div class="page-content">
+      <h1>Lista de Héroes de LOL</h1>
 
-      <!-- Botón "Siguiente" -->
-      <button id="nextBtn" class="carousel-btn">›</button>
+      <!-- Contenedor general del carrusel -->
+      <div class="carousel-container">
+        <!-- Botón "Anterior" -->
+        <button id="prevBtn" class="carousel-btn">‹</button>
+
+        <!-- Carrusel (aquí se inyectan las tarjetas con JS) -->
+        <div id="carousel" class="carousel"></div>
+
+        <!-- Botón "Siguiente" -->
+        <button id="nextBtn" class="carousel-btn">›</button>
+      </div>
     </div>
 
-    <!-- Tu script de lógica (donde harás el fetch y el render del carrusel) -->
     <script src="script.js"></script>
     <noscript>
-        <p style="color: red;">Este sitio requiere JavaScript para funcionar correctamente. Por favor, activa JavaScript en tu navegador.</p>
-      </noscript>
+      <p style="color: red;">
+        Este sitio requiere JavaScript para funcionar correctamente.
+        Por favor, activa JavaScript en tu navegador.
+      </p>
+    </noscript>
   </body>
 </html>

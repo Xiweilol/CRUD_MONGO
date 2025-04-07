@@ -350,6 +350,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// Restaurar token de localStorage a sessionStorage al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+  if (!sessionStorage.getItem("token") && localStorage.getItem("token")) {
+    sessionStorage.setItem("token", localStorage.getItem("token"));
+  }
+});
+
 /*****************************************************
  * 4) PÁGINA: LOGIN.HTML (LOGIN) con redirección según el rol
  *****************************************************/
@@ -392,7 +399,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           // Guardamos el token en sessionStorage
           sessionStorage.setItem("token", data.token);
-          
           // Guardamos el rol del usuario también
           sessionStorage.setItem("userRole", data.user.rol);
           
@@ -465,7 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Preparar el payload para enviar a la API. 
+    // Preparar el payload para enviar a la API.
     // El backend se encargará de asignar el rol "admin" o "user" según el código.
     const payload = { 
       nombre, 
@@ -500,3 +506,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+/*****************************************************
+ *Funcion de salir de sesion
+ *****************************************************/
+function logout() {
+  // Eliminamos el token y el rol del usuario
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("userRole");
+  localStorage.removeItem("token");
+  
+  // Redirigimos a la página de login (o a la que prefieras)
+  window.location.href = "login.html";
+}

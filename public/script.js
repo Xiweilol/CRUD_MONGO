@@ -350,10 +350,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// Restaurar token de localStorage a sessionStorage al cargar la página
+// Al cargar la página, restauramos el token de localStorage a sessionStorage si es que no está.
 document.addEventListener("DOMContentLoaded", () => {
   if (!sessionStorage.getItem("token") && localStorage.getItem("token")) {
     sessionStorage.setItem("token", localStorage.getItem("token"));
+  }
+
+  // Verificamos si ya hay una sesión activa
+  const token = sessionStorage.getItem("token");
+  const userRole = sessionStorage.getItem("userRole");
+
+  // Si estamos en index.html (o la raíz) y hay sesión activa, redirigimos según el rol.
+  const isIndex = window.location.pathname.includes("index.html") || window.location.pathname === "/";
+  if (isIndex && token && userRole) {
+    if (userRole === "admin") {
+      window.location.href = "editHero.html";
+    } else {
+      window.location.href = "listHeroes.html";
+    }
   }
 });
 

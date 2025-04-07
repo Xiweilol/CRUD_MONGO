@@ -350,17 +350,20 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// Al cargar la página, restauramos el token de localStorage a sessionStorage si es que no está.
+// ===================
+// RESTAURACIÓN Y REDIRECCIÓN AUTOMÁTICA EN INDEX
+// ===================
 document.addEventListener("DOMContentLoaded", () => {
+  // Si no hay token en sessionStorage, lo restauramos desde localStorage (si existe)
   if (!sessionStorage.getItem("token") && localStorage.getItem("token")) {
     sessionStorage.setItem("token", localStorage.getItem("token"));
   }
-
-  // Verificamos si ya hay una sesión activa
+  
+  // Verificar si hay sesión activa
   const token = sessionStorage.getItem("token");
   const userRole = sessionStorage.getItem("userRole");
 
-  // Si estamos en index.html (o la raíz) y hay sesión activa, redirigimos según el rol.
+  // Si estamos en index.html (o la raíz) y hay sesión activa, redirigimos según el rol
   const isIndex = window.location.pathname.includes("index.html") || window.location.pathname === "/";
   if (isIndex && token && userRole) {
     if (userRole === "admin") {
@@ -370,6 +373,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+// ===================
+// PROTECCIÓN EN PÁGINAS PROTEGIDAS (por ejemplo, editHero.html)
+// ===================
+// Si estamos en editHero.html, verificamos que exista un token en sessionStorage
+if (window.location.pathname.includes("editHero.html") || window.location.pathname.includes("listHeroes.html")) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      // Si no hay token, redirigimos al login
+      window.location.href = "login.html";
+    }
+  });
+}
 
 /*****************************************************
  * 4) PÁGINA: LOGIN.HTML (LOGIN) con redirección según el rol

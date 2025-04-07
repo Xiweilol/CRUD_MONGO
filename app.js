@@ -210,31 +210,42 @@ app.delete('/api/characters/:id', async (req, res) => {
 
 
 
+// Middleware para proteger rutas
+function verifyToken(req, res, next) {
+  const token = req.headers['authorization'];
+  if (!token) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: "Token inválido" });
+    }
+    req.user = decoded;
+    next();
+  });
+}
+
 /* =====================================================
-  Rutas para el registro de usuarios
+   Rutas para el registro de usuarios
 ===================================================== */
 app.post(
   '/api/register',
   [
     body('nombre')
       .notEmpty().withMessage('El nombre es obligatorio.')
-      .custom(noHtml),
+      .custom(value => true),
     body('apellido')
       .notEmpty().withMessage('El apellido es obligatorio.')
-      .custom(noHtml),
+      .custom(value => true),
     body('email')
       .isEmail().withMessage('Debe ser un email válido.'),
     body('telefono')
       .notEmpty().withMessage('El teléfono es obligatorio.')
       .isNumeric().withMessage('El teléfono debe contener solo números.'),
-    // Eliminamos la validación del campo 'rol'
-    // Agregamos validación opcional para 'codigoAdmin' si es necesario:
+    // Validamos el campo opcional codigoAdmin
     body('codigoAdmin')
       .optional()
-      .custom(value => {
-        // Puedes agregar validaciones adicionales si lo requieres
-        return true;
-      }),
+      .custom(value => true),
     body('password')
       .notEmpty().withMessage('La contraseña es obligatoria.')
   ],
@@ -277,7 +288,7 @@ app.post(
 );
 
 /* =====================================================
-  Rutas para el inicio de sesión (login)
+   Rutas para el inicio de sesión (login)
 ===================================================== */
 app.post(
   '/api/login',
@@ -299,16 +310,15 @@ app.post(
       if (!user) {
         return res.status(400).json({ error: 'Credenciales inválidas.' });
       }
-      // Compara la contraseña ingresada con la encriptada almacenada
+      // Compara la contraseña ingresada con la almacenada encriptada
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({ error: 'Credenciales inválidas.' });
       }
-      // Genera un token JWT
+      // Genera un token JWT con el id del usuario y su rol
       const payload = { userId: user._id, rol: user.rol };
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
       
-      // Modificamos la respuesta para incluir información básica del usuario
       return res.json({ 
         token,
         user: {
@@ -324,6 +334,30 @@ app.post(
     }
   }
 );
+
+/* =====================================================
+   Ruta protegida para edición de héroes
+   Solo accesible para administradores (rol: admin)
+===================================================== */
+app.get('/api/editHero', verifyToken, (req, res) => {
+  if (req.user.rol !== 'admin') {
+    return res.status(403).json({ error: "Acceso denegado" });
+  }
+  // Aquí se envía la información para editar héroes
+  res.json({ message: "Acceso concedido a la edición de héroes" });
+});
+
+/* =====================================================
+   Ruta protegida para listar héroes
+   Accesible solo para usuarios con rol "user" (usuario normal)
+===================================================== */
+app.get('/api/listHero', verifyToken, (req, res) => {
+  if (req.user.rol !== 'user') {
+    return res.status(403).json({ error: "Acceso denegado" });
+  }
+  // Aquí se envía la información de la lista de héroes para usuario normal
+  res.json({ message: "Acceso concedido a la lista de héroes para usuario normal" });
+});
 
 // Levantar el servidor
 app.listen(port, () => {

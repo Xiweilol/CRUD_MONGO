@@ -23,7 +23,8 @@ mongoose.connect(process.env.MONGO_URL, {
 // Middleware
 app.use(cors());
 app.use(express.json());
-
+const mongoSanitize = require('express-mongo-sanitize')
+app.use(mongoSanitize())
 // Servir archivos estáticos de la carpeta "public"
 app.use(express.static('public'));
 

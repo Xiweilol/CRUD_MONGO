@@ -351,7 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /*****************************************************
- * 4) PÁGINA: LOGIN.HTML (LOGIN)
+ * 4) PÁGINA: LOGIN.HTML (LOGIN) con redirección según el rol
  *****************************************************/
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
@@ -390,10 +390,20 @@ document.addEventListener("DOMContentLoaded", () => {
           const errorMsg = data.error || (data.errors && data.errors.map(err => err.msg).join(", "));
           alert("Error en el inicio de sesión: " + errorMsg);
         } else {
-          // Guardamos el token en localStorage y redireccionamos
+          // Guardamos el token en localStorage
           sessionStorage.setItem("token", data.token);
+          
+          // Guardamos el rol del usuario también
+          sessionStorage.setItem("userRole", data.user.rol);
+          
           alert("¡Inicio de sesión exitoso!");
-          window.location.href = "index.html";
+          
+          // Redireccionamos según el rol
+          if (data.user.rol === "admin") {
+            window.location.href = "editHero.html";
+          } else {
+            window.location.href = "listHeroes.html";
+          }
         }
       } catch (error) {
         console.error("Error de conexión:", error);
@@ -404,11 +414,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /*****************************************************
- * 5) PÁGINA: empezar.html (REGISTRO)
+ * 5) PÁGINA: empezar.html (REGISTRO) con verificación de código admin
  *****************************************************/
 document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registroForm");
   if (!registerForm) return; // Si no existe, no continúa para evitar errores en otras páginas
+
+  // Código de administrador para verificación
+  const ADMIN_CODE = process.env.ADMIN_CODE;
 
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault(); // Evita el envío automático del formulario
@@ -422,8 +435,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value;
 
     // Verificar que ninguno de los campos esté vacío
-    if (!nombre || !apellido || !email || !telefono || !rol || !password) {
-      alert("Por favor, completa todos los campos.");
+    if (!nombre || !apellido || !email || !telefono || !password) {
+      alert("Por favor, completa todos los campos obligatorios.");
       return;
     }
 
@@ -454,14 +467,24 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("El teléfono debe contener solo números.");
       return;
     }
-    // Validar que el código de rol contenga solo números
-    if (!soloNumeros.test(rol)) {
-      alert("El código de rol debe contener solo números.");
-      return;
+
+    // Determinar el rol del usuario basado en el código de administrador
+    let userRole = "user"; // Por defecto, es un usuario normal
+
+    // Si se ingresó un código y coincide con el código admin, asignar rol admin
+    if (rol === ADMIN_CODE) {
+      userRole = "admin";
     }
 
     // Preparar el payload para enviar a la API
-    const payload = { nombre, apellido, email, telefono, rol, password };
+    const payload = { 
+      nombre, 
+      apellido, 
+      email, 
+      telefono, 
+      rol: userRole, // Enviamos el rol determinado
+      password 
+    };
 
     try {
       const response = await fetch(API_REGISTER, {

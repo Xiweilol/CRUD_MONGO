@@ -208,13 +208,10 @@ app.delete('/api/characters/:id', async (req, res) => {
   }
 });
 
-// Levantar el servidor
-app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}`);
-});
+
 
 /* =====================================================
-   Rutas para el registro de usuarios
+  Rutas para el registro de usuarios
 ===================================================== */
 app.post(
   '/api/register',
@@ -225,10 +222,10 @@ app.post(
     body('telefono')
       .notEmpty().withMessage('El teléfono es obligatorio.')
       .isNumeric().withMessage('El teléfono debe contener solo números.'),
-    // El campo rol es opcional; si se envía, debe ser numérico
+    // Ya no validamos que el rol sea numérico, ya que ahora enviamos directamente el string 'user' o 'admin'
     body('rol')
       .optional()
-      .isNumeric().withMessage('El código de rol debe contener solo números.'),
+      .isIn(['user', 'admin']).withMessage('Rol no válido'),
     body('password').notEmpty().withMessage('La contraseña es obligatoria.')
   ],
   async (req, res) => {
@@ -244,10 +241,9 @@ app.post(
         return res.status(400).json({ error: 'El email ya está registrado.' });
       }
 
-      // Determina el rol:
-      // Si se envía un código de rol y coincide con ADMIN_CODE, el usuario es "admin"
-      // De lo contrario, se asigna "user"
-      const finalRole = (rol && rol.trim() === process.env.ADMIN_CODE) ? 'admin' : 'user';
+      // Ya no necesitamos verificar el código admin aquí, eso lo hacemos en el frontend
+      // Usamos el rol que viene en la solicitud (se validó arriba que solo puede ser 'user' o 'admin')
+      const finalRole = rol || 'user'; // Si no se envía, asignamos 'user' por defecto
 
       // Encripta la contraseña
       const salt = await bcrypt.genSalt(10);
@@ -271,7 +267,7 @@ app.post(
 );
 
 /* =====================================================
-   Rutas para el inicio de sesión (login)
+  Rutas para el inicio de sesión (login)
 ===================================================== */
 app.post(
   '/api/login',
@@ -299,9 +295,25 @@ app.post(
       // Genera un token JWT
       const payload = { userId: user._id, rol: user.rol };
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-      return res.json({ token });
+      
+      // Modificamos la respuesta para incluir información básica del usuario
+      // Especialmente el rol, que necesitamos para la redirección en el frontend
+      return res.json({ 
+        token,
+        user: {
+          id: user._id,
+          nombre: user.nombre,
+          apellido: user.apellido,
+          email: user.email,
+          rol: user.rol
+        }
+      });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   }
 );
+// Levantar el servidor
+app.listen(port, () => {
+  console.log(`Servidor escuchando en http://localhost:${port}`);
+});

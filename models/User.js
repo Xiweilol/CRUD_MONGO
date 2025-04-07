@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema({
   apellido: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   telefono: { type: String, required: true },
-  // El campo "rol" ahora es opcional, y por defecto se asigna "user".
-  rol: { type: String, default: 'user' },
+  // El campo "rol" ahora puede ser 'user' o 'admin'
+  rol: { type: String, enum: ['user', 'admin'], default: 'user' },
   password: { type: String, required: true }
 }, { timestamps: true });
 

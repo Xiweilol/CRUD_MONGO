@@ -6,6 +6,9 @@ require('dotenv').config();
 const { body, validationResult } = require('express-validator'); // Importa express-validator
 
 const Character = require('./models/Character.js'); // Importa tu modelo de personaje
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('./models/User.js'); // Asegúrate de que la ruta sea correcta
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -209,3 +212,96 @@ app.delete('/api/characters/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
+
+/* =====================================================
+   Rutas para el registro de usuarios
+===================================================== */
+app.post(
+  '/api/register',
+  [
+    body('nombre').notEmpty().withMessage('El nombre es obligatorio.').custom(noHtml),
+    body('apellido').notEmpty().withMessage('El apellido es obligatorio.').custom(noHtml),
+    body('email').isEmail().withMessage('Debe ser un email válido.'),
+    body('telefono')
+      .notEmpty().withMessage('El teléfono es obligatorio.')
+      .isNumeric().withMessage('El teléfono debe contener solo números.'),
+    // El campo rol es opcional; si se envía, debe ser numérico
+    body('rol')
+      .optional()
+      .isNumeric().withMessage('El código de rol debe contener solo números.'),
+    body('password').notEmpty().withMessage('La contraseña es obligatoria.')
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { nombre, apellido, email, telefono, rol, password } = req.body;
+      // Verifica si ya existe un usuario con ese email
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ error: 'El email ya está registrado.' });
+      }
+
+      // Determina el rol:
+      // Si se envía un código de rol y coincide con ADMIN_CODE, el usuario es "admin"
+      // De lo contrario, se asigna "user"
+      const finalRole = (rol && rol.trim() === process.env.ADMIN_CODE) ? 'admin' : 'user';
+
+      // Encripta la contraseña
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const newUser = new User({
+        nombre,
+        apellido,
+        email,
+        telefono,
+        rol: finalRole,
+        password: hashedPassword
+      });
+
+      await newUser.save();
+      return res.status(201).json({ message: 'Usuario registrado correctamente' });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+/* =====================================================
+   Rutas para el inicio de sesión (login)
+===================================================== */
+app.post(
+  '/api/login',
+  [
+    body('username').notEmpty().withMessage('El usuario (email) es obligatorio.'),
+    body('password').notEmpty().withMessage('La contraseña es obligatoria.')
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { username, password } = req.body;
+      // Se asume que "username" es el email
+      const user = await User.findOne({ email: username });
+      if (!user) {
+        return res.status(400).json({ error: 'Credenciales inválidas.' });
+      }
+      // Compara la contraseña ingresada con la encriptada almacenada
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: 'Credenciales inválidas.' });
+      }
+      // Genera un token JWT
+      const payload = { userId: user._id, rol: user.rol };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+      return res.json({ token });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);

@@ -1,6 +1,7 @@
 // URL de la API (ajusta según tu backend en Render)
 const API_URL = "https://crud-mongo-rsxf.onrender.com/api/characters";
-
+const API_REGISTER = "https://crud-mongo-rsxf.onrender.com/api/register";
+const API_LOGIN    = "https://crud-mongo-rsxf.onrender.com/api/login";
 /**
  * Función para escapar caracteres especiales y evitar inyecciones HTML.
  * Convierte: &, <, >, " y ' en sus entidades HTML.
@@ -348,13 +349,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
- /*****************************************************
-   * 4) PÁGINA: LOGIN.HTML (LOGIN)
-   *****************************************************/
+
+/*****************************************************
+ * 4) PÁGINA: LOGIN.HTML (LOGIN)
+ *****************************************************/
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault(); // Evitamos el envío inmediato del formulario
 
       const username = document.getElementById("username").value.trim();
@@ -372,22 +374,43 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Si todo es correcto, procede con el login
-      console.log("Login exitoso con:", username, password);
+      // Se prepara el payload (se asume que username es el email)
+      const payload = { username, password };
 
+      try {
+        const response = await fetch(API_LOGIN, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          const errorMsg = data.error || (data.errors && data.errors.map(err => err.msg).join(", "));
+          alert("Error en el inicio de sesión: " + errorMsg);
+        } else {
+          // Guardamos el token en localStorage y redireccionamos
+          sessionStorage.setItem("token", data.token);
+          alert("¡Inicio de sesión exitoso!");
+          window.location.href = "index.html";
+        }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+        alert("Error en la conexión. Intenta nuevamente.");
+      }
     });
   }
 });
 
- /*****************************************************
-   * 5) PÁGINA: empezar.html (registro)
-   *****************************************************/
- document.addEventListener("DOMContentLoaded", () => {
-  // Verifica si el formulario de registro existe en la página (id="registerForm")
+/*****************************************************
+ * 5) PÁGINA: empezar.html (REGISTRO)
+ *****************************************************/
+document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registroForm");
   if (!registerForm) return; // Si no existe, no continúa para evitar errores en otras páginas
 
-  registerForm.addEventListener("submit", (e) => {
+  registerForm.addEventListener("submit", async (e) => {
     e.preventDefault(); // Evita el envío automático del formulario
 
     // Obtener y limpiar los valores de cada campo
@@ -426,24 +449,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Expresión regular para verificar que solo haya números
     const soloNumeros = /^\d+$/;
-
     // Validar que el teléfono contenga solo números
     if (!soloNumeros.test(telefono)) {
       alert("El teléfono debe contener solo números.");
       return;
     }
-
     // Validar que el código de rol contenga solo números
     if (!soloNumeros.test(rol)) {
       alert("El código de rol debe contener solo números.");
       return;
     }
 
-    // Si todo es correcto, procede con el registro o envía los datos al servidor
-    console.log("Registro validado:", { nombre, apellido, email, telefono, rol, password });
+    // Preparar el payload para enviar a la API
+    const payload = { nombre, apellido, email, telefono, rol, password };
 
-    // Para este ejemplo, mostramos un mensaje y luego limpiamos el formulario
-    alert("Registro exitoso");
-    registerForm.reset();
+    try {
+      const response = await fetch(API_REGISTER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        const errorMsg = data.error || (data.errors && data.errors.map(err => err.msg).join(", "));
+        alert("Error en el registro: " + errorMsg);
+      } else {
+        alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+        // Redireccionar a la página de login
+        window.location.href = "login.html";
+      }
+    } catch (error) {
+      console.error("Error de conexión:", error);
+      alert("Error en la conexión. Intenta nuevamente.");
+    }
   });
 });

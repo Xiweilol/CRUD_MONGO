@@ -412,9 +412,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      try {
+        
       const payload = { username, password };
 
-      try {
+      
         const response = await fetch(API_LOGIN, {
           method: "POST",
           headers: {

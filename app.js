@@ -25,6 +25,7 @@ app.use(cors());
 app.use(express.json());
 const mongoSanitize = require('express-mongo-sanitize')
 app.use(mongoSanitize())
+app.use(sanitizeRequestBody);
 // Servir archivos estáticos de la carpeta "public"
 app.use(express.static('public'));
 
@@ -359,6 +360,38 @@ app.get('/api/listHero', verifyToken, (req, res) => {
   // Aquí se envía la información de la lista de héroes para usuario normal
   res.json({ message: "Acceso concedido a la lista de héroes para usuario normal" });
 });
+
+// Función para validar si una clave es segura para MongoDB
+function isValidNoSQLKey(key) {
+  // La regex detecta si la cadena comienza con "$" o contiene un "."
+  const regexNoSQLInjection = /(^\$)|(\.)/;
+  return !regexNoSQLInjection.test(key);
+}
+
+// Middleware para revisar el body y rechazar claves con caracteres maliciosos
+function sanitizeRequestBody(req, res, next) {
+  // Función auxiliar recursiva que recorre el objeto
+  function sanitizeObject(obj) {
+    if (typeof obj !== "object" || obj === null) return true;
+    for (const key in obj) {
+      if (Object.hasOwn(obj, key)) {
+        if (!isValidNoSQLKey(key)) {
+          return false; // Se encontró una clave sospechosa
+        }
+        // Si el valor es otro objeto, se revisa de forma recursiva
+        if (typeof obj[key] === "object") {
+          if (!sanitizeObject(obj[key])) return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  if (!sanitizeObject(req.body)) {
+    return res.status(400).json({ error: "La solicitud contiene caracteres maliciosos en las claves." });
+  }
+  next();
+}
 
 // Levantar el servidor
 app.listen(port, () => {
